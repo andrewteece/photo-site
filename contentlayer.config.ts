@@ -13,10 +13,14 @@ export const Post = defineDocumentType(() => ({
     cover: { type: 'string' },
   },
   computedFields: {
-    slug: { type: 'string', resolve: (post) => post._raw.flattenedPath },
+    slug: {
+      type: 'string',
+      resolve: (post) => post._raw.flattenedPath.replace(/^blog\//, ''),
+    },
     url: {
       type: 'string',
-      resolve: (post) => `/blog/${post._raw.flattenedPath}`,
+      resolve: (post) =>
+        `/blog/${post._raw.flattenedPath.replace(/^blog\//, '')}`,
     },
   },
 }));

@@ -14,7 +14,8 @@ const components = {
 export function Mdx({ code }: { code: string }) {
   const Component = useMDXComponent(code);
   return (
-    <div className='prose prose-zinc dark:prose-invert max-w-none'>
+    <div className='prose max-w-none'>
+      {/* ✅ drop prose-zinc, let Tailwind config set colors */}
       <Component components={components} />
     </div>
   );
