@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+import createMDX from '@next/mdx';
+import { withContentlayer } from 'next-contentlayer';
+import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+const withMDX = createMDX({ extension: /\.mdx?$/ });
 
-export default nextConfig;
+const nextConfig = {
+  pageExtensions: ['ts', 'tsx', 'mdx'],
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+} satisfies NextConfig;
+
+export default withContentlayer(withMDX(nextConfig));

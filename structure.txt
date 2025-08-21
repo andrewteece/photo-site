@@ -1,0 +1,64 @@
+.
+├── content.layer.ts
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── node_modules
+│   ├── @eslint
+│   │   └── eslintrc -> ../.pnpm/@eslint+eslintrc@3.3.1/node_modules/@eslint/eslintrc
+│   ├── @next
+│   │   └── mdx -> ../.pnpm/@next+mdx@15.5.0/node_modules/@next/mdx
+│   ├── @tailwindcss
+│   │   ├── postcss -> ../.pnpm/@tailwindcss+postcss@4.1.12/node_modules/@tailwindcss/postcss
+│   │   └── typography -> ../.pnpm/@tailwindcss+typography@0.5.16_tailwindcss@4.1.12/node_modules/@tailwindcss/typography
+│   ├── @types
+│   │   ├── node -> ../.pnpm/@types+node@20.19.11/node_modules/@types/node
+│   │   ├── react -> ../.pnpm/@types+react@19.1.10/node_modules/@types/react
+│   │   └── react-dom -> ../.pnpm/@types+react-dom@19.1.7_@types+react@19.1.10/node_modules/@types/react-dom
+│   ├── contentlayer -> .pnpm/contentlayer@0.3.4_esbuild@0.18.20/node_modules/contentlayer
+│   ├── eslint -> .pnpm/eslint@9.33.0_jiti@2.5.1/node_modules/eslint
+│   ├── eslint-config-next -> .pnpm/eslint-config-next@15.5.0_eslint@9.33.0_jiti@2.5.1__typescript@5.9.2/node_modules/eslint-config-next
+│   ├── gray-matter -> .pnpm/gray-matter@4.0.3/node_modules/gray-matter
+│   ├── next -> .pnpm/next@15.5.0_@opentelemetry+api@1.9.0_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next
+│   ├── next-contentlayer -> .pnpm/next-contentlayer@0.3.4_contentlayer@0.3.4_esbuild@0.18.20__esbuild@0.18.20_next@15.5.0_efeffdfa8244f9b5a842c352c5efac9f/node_modules/next-contentlayer
+│   ├── react -> .pnpm/react@19.1.0/node_modules/react
+│   ├── react-dom -> .pnpm/react-dom@19.1.0_react@19.1.0/node_modules/react-dom
+│   ├── reading-time -> .pnpm/reading-time@1.5.0/node_modules/reading-time
+│   ├── tailwindcss -> .pnpm/tailwindcss@4.1.12/node_modules/tailwindcss
+│   └── typescript -> .pnpm/typescript@5.9.2/node_modules/typescript
+├── package.json
+├── pnpm-lock.yaml
+├── postcss.config.mjs
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── images
+│   │   └── blog
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── README.md
+├── src
+│   └── app
+│       ├── blog
+│       │   ├── [slug]
+│       │   └── page.tsx
+│       ├── components
+│       │   ├── layout
+│       │   ├── mdx.tsx
+│       │   └── ui
+│       ├── contact
+│       │   └── page.tsx
+│       ├── content
+│       │   └── blog
+│       ├── favicon.ico
+│       ├── globals.css
+│       ├── layout.tsx
+│       ├── page.tsx
+│       └── portfolio
+│           ├── [slug]
+│           └── page.tsx
+├── structure.txt
+└── tsconfig.json
+
+39 directories, 23 files
