@@ -1,5 +1,7 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 
+/* component helpers */
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition hover:shadow-md;
@@ -13,8 +15,4 @@
   .textarea {
     @apply w-full rounded-xl border px-3 py-2;
   }
-}
-
-.prose {
-  @apply prose-zinc max-w-none;
 }
