@@ -1,23 +1,151 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
-:root {
-  --background: 255 255 255;
-  --foreground: 10 10 10;
+/* Tailwind v4 theme tokens & light/dark palettes */
+@theme {
+  --font-sans: var(
+    --font-sans,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Inter,
+    'Noto Sans',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Apple Color Emoji',
+    'Segoe UI Emoji'
+  );
+  --font-serif: var(
+    --font-serif,
+    ui-serif,
+    Georgia,
+    Cambria,
+    'Times New Roman',
+    Times
+  );
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --shadow-subtle: 0 1px 12px rgba(0, 0, 0, 0.06);
+  --shadow-photo: 0 6px 30px rgba(0, 0, 0, 0.18);
+
+  /* Colors (light) */
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.12 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.12 0 0);
+  --color-muted: oklch(0.96 0.01 240);
+  --color-muted-foreground: oklch(0.5 0.02 240);
+  --color-border: oklch(0.9 0.01 240);
+  --color-input: var(--color-border);
+  --color-ring: oklch(0.68 0.15 35);
+
+  /* Brand */
+  --color-primary: oklch(0.72 0.2 35); /* warm burnt orange */
+  --color-primary-foreground: oklch(0.98 0 0);
+
+  /* Accent sand */
+  --color-accent: oklch(0.95 0.05 70);
+  --color-accent-foreground: oklch(0.3 0.03 70);
 }
 
-/* component helpers */
+/* Dark theme overrides */
+.dark {
+  --color-background: oklch(0.15 0.02 240);
+  --color-foreground: oklch(0.98 0 0);
+  --color-card: oklch(0.18 0.02 240);
+  --color-card-foreground: oklch(0.98 0 0);
+  --color-muted: oklch(0.24 0.02 240);
+  --color-muted-foreground: oklch(0.75 0.02 240);
+  --color-border: oklch(0.3 0.01 240);
+  --color-input: var(--color-border);
+  --color-ring: oklch(0.72 0.2 35);
+  --color-primary: oklch(0.68 0.19 35);
+  --color-primary-foreground: oklch(0.99 0 0);
+  --color-accent: oklch(0.3 0.03 70);
+  --color-accent-foreground: oklch(0.95 0.05 70);
+}
+
+/* Base resets mapped to tokens */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Component primitives */
 @layer components {
+  /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition hover:shadow-md;
+    @apply inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition-colors
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+           disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply bg-black text-white border-black hover:opacity-90;
+    @apply bg-primary text-primary-foreground border-transparent hover:opacity-90;
   }
-  .input {
-    @apply w-full rounded-xl border px-3 py-2;
+  .btn-outline {
+    @apply bg-transparent text-foreground border-input hover:bg-accent;
   }
+  .btn-ghost {
+    @apply bg-transparent border-transparent hover:bg-muted;
+  }
+
+  /* Inputs */
+  .input,
   .textarea {
-    @apply w-full rounded-xl border px-3 py-2;
+    @apply w-full rounded-xl border border-input bg-background text-foreground px-3 py-2
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
   }
+
+  /* Cards */
+  .card {
+    @apply rounded-2xl border bg-card text-card-foreground shadow-[var(--shadow-subtle)];
+  }
+  .card-body {
+    @apply p-6;
+  }
+
+  /* Photography helpers */
+  .photo-frame {
+    @apply rounded-2xl bg-card shadow-[var(--shadow-photo)] overflow-hidden border;
+  }
+  .photo-frame > img,
+  .photo-frame > picture,
+  .photo-frame > video {
+    @apply block w-full h-auto;
+  }
+  .photo-caption {
+    @apply text-sm text-muted-foreground mt-2 text-center;
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .container-tight {
+    @apply container max-w-3xl;
+  }
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
+/* Typography polish for blog posts */
+.prose {
+  @apply prose-neutral dark:prose-invert;
+}
+.prose :where(img):not(:where([class~='not-prose'] *)) {
+  border-radius: var(--radius-xl);
+}
+.prose :where(a):not(:where([class~='not-prose'] *)) {
+  @apply text-primary no-underline hover:underline;
 }
