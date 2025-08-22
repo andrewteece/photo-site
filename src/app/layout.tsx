@@ -17,9 +17,7 @@ export const metadata: Metadata = {
   description:
     'Timeless, editorial-style photography for weddings, portraits, and brands.',
   metadataBase: new URL('https://yourdomain.com'),
-  icons: {
-    icon: '/favicon.ico',
-  },
+  icons: { icon: '/favicon.ico' },
 };
 
 export default function RootLayout({
@@ -38,6 +36,7 @@ export default function RootLayout({
       </head>
       <body className='min-h-dvh flex flex-col font-sans'>
         <Header />
+        {/* pages control their own width with <Shell /> */}
         <main className='flex-1'>{children}</main>
         <Footer />
       </body>

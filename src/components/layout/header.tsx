@@ -27,9 +27,12 @@ export function Header() {
         scrolled ? 'shadow-[0_6px_24px_rgba(0,0,0,0.08)]' : 'shadow-none',
       ].join(' ')}
     >
+      {/* Explicit centering to match <Shell /> */}
       <div
         className={[
-          'container flex items-center justify-between',
+          'w-full mx-auto px-4 md:px-8',
+          'max-w-6xl',
+          'flex items-center justify-between',
           'h-16 data-[scrolled=true]:h-14',
           'transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
         ].join(' ')}
@@ -48,7 +51,7 @@ export function Header() {
             height={36}
             priority
             className={[
-              'h-9 w-auto object-contain transition-opacity',
+              'h-9 w-auto object-contain transition-[height,opacity]',
               'group-hover:opacity-90',
               'data-[scrolled=true]:h-8',
               'duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
@@ -75,13 +78,11 @@ export function Header() {
           <NavLink href='/contact' className='btn btn-primary'>
             Contact
           </NavLink>
-          {/* IMPORTANT: do not pass btn classes to ThemeToggle */}
           <ThemeToggle withSystem />
         </nav>
 
         {/* Mobile actions */}
         <div className='md:hidden flex items-center gap-2'>
-          {/* IMPORTANT: no extra classes here either */}
           <ThemeToggle />
           <MobileMenu />
         </div>
