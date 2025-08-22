@@ -1,0 +1,9 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <path d="M14 26V16h10"/>
+    <path d="M50 26V16H40"/>
+    <path d="M14 38v10h10"/>
+    <path d="M50 38v10H40"/>
+  </g>
+  <text x="32" y="38" text-anchor="middle" font-family="Fraunces, ui-serif, Georgia, serif" font-weight="600" font-size="22" fill="currentColor">AT</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 320 64" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <path d="M18 26V16h10"/>
+    <path d="M54 26V16H44"/>
+    <path d="M18 38v10h10"/>
+    <path d="M54 38v10H44"/>
+  </g>
+  <text x="88" y="30" font-family="Fraunces, ui-serif, Georgia, serif" font-weight="600" font-size="22" fill="currentColor">Andrew Teece</text>
+  <text x="88" y="46" font-family="Inter, ui-sans-serif, system-ui, Arial, sans-serif"
+        font-size="10" fill="currentColor" letter-spacing="6" textLength="170">PHOTOGRAPHY</text>
+</svg>
+

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { MobileMenu } from '@/components/layout/mobile-menu';
 import { NavLink } from '@/components/layout/NavLink';
+import { LogoWordmark } from '@/components/brand/LogoWordmark';
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -44,20 +45,14 @@ export function Header() {
           className='flex items-center gap-2 group'
           aria-label='Andrew Teece Photography – Home'
         >
-          <Image
-            src='/logo.png'
-            alt='Andrew Teece Photography'
-            width={160}
-            height={36}
-            priority
-            className={[
-              'h-9 w-auto object-contain transition-[height,opacity]',
-              'group-hover:opacity-90',
-              'data-[scrolled=true]:h-8',
-              'duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
-            ].join(' ')}
-            data-scrolled={scrolled ? 'true' : 'false'}
-          />
+          {/* Brand */}
+          <Link
+            href='/'
+            aria-label='Andrew Teece Photography — Home'
+            className='flex items-center'
+          >
+            <LogoWordmark className='text-foreground' markSize={22} />
+          </Link>
           <span className='sr-only'>Andrew Teece Photography</span>
         </Link>
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     'Timeless, editorial-style photography for weddings, portraits, and brands.',
   metadataBase: new URL('https://yourdomain.com'),
-  icons: { icon: '/favicon.ico' },
+  icons: { icon: '/brand/logo-mark-light.png' },
 };
 
 export default function RootLayout({
@@ -33,6 +33,7 @@ export default function RootLayout({
     >
       <head>
         <ThemeScript />
+        <link id='site-favicon' rel='icon' href='/brand/logo-mark-light.png' />
       </head>
       <body className='min-h-dvh flex flex-col font-sans'>
         <Header />
