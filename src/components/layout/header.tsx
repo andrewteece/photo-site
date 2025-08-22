@@ -1,4 +1,3 @@
-// app/components/header.tsx (or src/components/header.tsx)
 import Link from 'next/link';
 import Image from 'next/image';
 

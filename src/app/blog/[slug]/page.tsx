@@ -11,7 +11,7 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params; // ✅ await params
+  const { slug } = await params;
   const post = allPosts.find((p) => p.slug === slug);
   if (!post) return notFound();
 

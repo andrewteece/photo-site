@@ -22,6 +22,7 @@ export type Post = {
   body: MDX
   slug: string
   url: string
+  readingTime: string
 }  
 
 /** Nested types */

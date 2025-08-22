@@ -1,5 +1,6 @@
 // contentlayer.config.ts
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
+import readingTime from "reading-time";
 var Post = defineDocumentType(() => ({
   name: "Post",
   filePathPattern: `**/*.mdx`,
@@ -20,6 +21,10 @@ var Post = defineDocumentType(() => ({
     url: {
       type: "string",
       resolve: (post) => `/blog/${post._raw.flattenedPath.replace(/^blog\//, "")}`
+    },
+    readingTime: {
+      type: "string",
+      resolve: (doc) => readingTime(doc.body.raw).text
     }
   }
 }));
@@ -31,4 +36,4 @@ export {
   Post,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-4NJDTABO.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-TMFETKT2.mjs.map
