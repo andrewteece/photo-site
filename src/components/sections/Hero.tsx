@@ -1,45 +1,22 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import manifestJson from '@/lib/image-manifest.json';
 import { getCaptionFor } from '@/lib/captions';
 
-/** Manifest entry shape (when present) */
-type ManifestItem = {
-  src: string;
-  width: number;
-  height: number;
-  blurDataURL?: string;
-};
-const manifest = (manifestJson as ManifestItem[]) ?? [];
+type Slide = { src: string };
 
-/** Desired hero images */
-const heroSources = [
-  '/images/portfolio/calm-morning.jpg',
-  '/images/portfolio/goldengate.jpg',
-  '/images/portfolio/morning-colors.jpg',
+// Direct files from /public/images — keep this list small for LCP
+const heroSources: Slide[] = [
+  { src: '/images/portfolio/calm-morning.jpg' },
+  { src: '/images/portfolio/goldengate.jpg' },
+  { src: '/images/portfolio/morning-colors.jpg' },
 ];
 
 export default function Hero() {
   const prefersReduced = useReducedMotion();
-
-  // Build slides from manifest OR raw files (no blur)
-  const slides = useMemo(() => {
-    const list = heroSources
-      .map(
-        (src) =>
-          manifest.find((m) => m.src === src) || ({ src } as ManifestItem)
-      )
-      .filter((x): x is ManifestItem => Boolean(x?.src));
-    // Dedup
-    const seen = new Set<string>();
-    return list.filter((s) =>
-      seen.has(s.src) ? false : (seen.add(s.src), true)
-    );
-  }, []);
-
+  const slides = useMemo(() => heroSources.filter(Boolean), []);
   const [index, setIndex] = useState(0);
   const canAnimate = slides.length > 1 && !prefersReduced;
 
@@ -58,18 +35,19 @@ export default function Hero() {
   const meta = getCaptionFor(s.src);
 
   const Img = (
-    <Image
+    <img
       src={s.src}
       alt={meta.alt}
-      fill
-      priority
-      sizes='100vw'
-      // Use blur only when provided by manifest; otherwise no placeholder
-      placeholder={s.blurDataURL ? 'blur' : 'empty'}
-      blurDataURL={s.blurDataURL}
-      quality={90}
-      className='object-cover'
-      unoptimized /* ← bypass optimizer to avoid client-side swap issues */
+      decoding='async'
+      loading='eager'
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        display: 'block',
+      }}
     />
   );
 
