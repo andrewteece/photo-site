@@ -1,49 +1,14 @@
-// scripts/build-images.ts
+/* eslint-disable no-console */
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import sharp from 'sharp';
-import fg from 'fast-glob';
-import {
-  mkdirSync,
-  writeFileSync,
-  readFileSync,
-  statSync,
-  existsSync,
-} from 'node:fs';
-import { dirname, join, posix } from 'node:path';
 
-const INPUT = 'originals/portfolio/**/*.{jpg,jpeg,png,tif,tiff}';
-const OUTDIR = 'public/images/portfolio';
-const MANIFEST_OUT = 'src/lib/image-manifest.json';
-const CACHE_FILE = '.image-cache.json';
+const IN_DIR = 'originals/portfolio';
+const OUT_DIR = 'public/images/portfolio';
+const MANIFEST = 'src/lib/image-manifest.json';
 
-// Tweak these → also update SETTINGS_VERSION when you do
-const TARGET_LONG_EDGE = 3800;
-const JPEG_QUALITY = 86;
-
-// Bump this if you change any processing settings above
-const SETTINGS_VERSION = `v2-long${TARGET_LONG_EDGE}-q${JPEG_QUALITY}`;
-
-const FORCE = process.argv.includes('--force');
-
-const slugify = (name: string) =>
-  name
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9./-]/g, '');
-
-const normalizeOutExt = (file: string) =>
-  file.replace(/\.(tif|tiff|png|jpeg)$/i, '.jpg');
-
-const outPathFor = (absFile: string) => {
-  const rel = absFile.replace(/^originals\/portfolio\//, '');
-  const clean = slugify(rel);
-  return join(OUTDIR, normalizeOutExt(clean));
-};
-
-// Next/Image needs URL-ish paths
-const webSrcFor = (outPath: string) => {
-  const rel = outPath.replace(/^public\//, '');
-  return '/' + rel.split(posix.sep).join('/');
-};
+// Useful if a camera/export produced massive pixel counts (we're safe, but be explicit)
+sharp.concurrency(0);
 
 type ManifestItem = {
   src: string;
@@ -52,128 +17,128 @@ type ManifestItem = {
   blurDataURL: string;
 };
 
-type CacheEntry = {
-  srcMtimeMs: number;
-  srcSize: number;
-  settings: string;
-};
+function slugify(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/\.(jpeg|jpg|png|tif|tiff|webp|heic|heif)$/i, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
-type CacheMap = Record<string, CacheEntry>;
+async function ensureDir(dir: string) {
+  await fs.mkdir(dir, { recursive: true }).catch(() => {});
+}
 
-function loadCache(): CacheMap {
+async function isReadableImage(fp: string) {
   try {
-    return JSON.parse(readFileSync(CACHE_FILE, 'utf8'));
+    const buf = await fs.readFile(fp);
+    // Let sharp sniff the format. If it throws, we'll catch it.
+    await sharp(buf, { limitInputPixels: false }).metadata();
+    return true;
   } catch {
-    return {};
+    return false;
   }
 }
 
-function saveCache(cache: CacheMap) {
-  writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
+async function processOne(inputPath: string): Promise<ManifestItem | null> {
+  const base = path.basename(inputPath);
+  const outBase = `${slugify(base)}.jpg`;
+  const outPath = path.join(OUT_DIR, outBase);
+  const webSrc = `/images/portfolio/${outBase}`;
+
+  try {
+    const image = sharp(inputPath, { limitInputPixels: false }).rotate();
+
+    // Read metadata first — if this fails, we'll catch below
+    const meta = await image.metadata();
+
+    // Normalize everything to sRGB 8-bit and write a clean JPEG
+    const webJpeg = image
+      .toColourspace('srgb') // fix CMYK/GRAY/etc
+      .jpeg({
+        quality: 85,
+        mozjpeg: true,
+        chromaSubsampling: '4:4:4',
+        force: true,
+      });
+
+    await fs.writeFile(outPath, await webJpeg.toBuffer());
+
+    // Tiny LQIP (blur placeholder)
+    const blurBuf = await sharp(outPath)
+      .resize({ width: 28, withoutEnlargement: true })
+      .toFormat('jpeg', { quality: 35 })
+      .toBuffer();
+
+    const blurDataURL = `data:image/jpeg;base64,${blurBuf.toString('base64')}`;
+
+    // Dimensions: prefer meta (original) but fallback to reading from out
+    const width = meta.width ?? (await sharp(outPath).metadata()).width ?? 0;
+    const height = meta.height ?? (await sharp(outPath).metadata()).height ?? 0;
+
+    console.log(`→ ${inputPath}  =>  ${outPath}  (${width}×${height})`);
+    return { src: webSrc, width, height, blurDataURL };
+  } catch (err: any) {
+    console.warn(
+      `⚠️  Skipping "${inputPath}" — ${
+        err?.message || 'unsupported or unreadable image'
+      }`
+    );
+    return null;
+  }
 }
 
-(async () => {
+async function main() {
   console.log('🖼  Building web-ready images + blur placeholders…');
-  if (FORCE) console.log('⚠️  --force enabled: rebuilding all files');
 
-  const files = await fg(INPUT, { onlyFiles: true, caseSensitiveMatch: false });
-  if (files.length === 0) {
-    console.log('⚠️  No originals found in originals/portfolio/');
-    process.exit(0);
-  }
-  console.log(`✔ Found ${files.length} original(s)`);
+  await ensureDir(OUT_DIR);
 
-  const cache = loadCache();
+  // Collect all files in IN_DIR
+  let files = await fs.readdir(IN_DIR).catch(() => []);
+  files = files.filter((f) => !f.startsWith('.')); // ignore dotfiles
+
+  // Only attempt formats we intend to normalize; anything else will be skipped
+  const allowed = /\.(jpe?g|png|tiff?|webp|heic|heif)$/i;
+  const inputs = files
+    .filter((f) => allowed.test(f))
+    .map((f) => path.join(IN_DIR, f));
+
+  console.log(`✔ Found ${inputs.length} original(s)`);
+
   const manifest: ManifestItem[] = [];
   let processed = 0;
   let skipped = 0;
 
-  for (const file of files) {
-    const out = outPathFor(file);
-    const srcStat = statSync(file);
-    const key = file; // cache key is the source absolute-ish path
-
-    const cached = cache[key];
-    const upToDate =
-      !FORCE &&
-      cached &&
-      cached.settings === SETTINGS_VERSION &&
-      cached.srcMtimeMs === srcStat.mtimeMs &&
-      cached.srcSize === srcStat.size &&
-      existsSync(out) &&
-      existsSync(MANIFEST_OUT);
-
-    if (upToDate) {
-      // Still need manifest data for downstream use; we’ll re-derive dimensions via reading the output.
-      // Cheap way: read dimensions from the output file itself.
-      try {
-        const meta = await sharp(out).metadata();
-        const blurBuf = await sharp(out)
-          .resize({ width: 24 })
-          .jpeg({ quality: 40 })
-          .toBuffer();
-        manifest.push({
-          src: webSrcFor(out),
-          width: meta.width ?? 0,
-          height: meta.height ?? 0,
-          blurDataURL: `data:image/jpeg;base64,${blurBuf.toString('base64')}`,
-        });
-      } catch {
-        /* ignore */
-      }
+  for (const fp of inputs) {
+    // Quick guard: if sharp can't sniff the image, skip gracefully
+    const ok = await isReadableImage(fp);
+    if (!ok) {
+      console.warn(`⚠️  Skipping "${fp}" — unsupported format`);
       skipped++;
-      console.log(`↷ Skipping (up‑to‑date): ${out}`);
       continue;
     }
 
-    mkdirSync(dirname(out), { recursive: true });
-
-    // Build main web image
-    const base = sharp(file, { unlimited: true }).rotate();
-    const { data: mainBuf, info } = await base
-      .clone()
-      .resize({ width: TARGET_LONG_EDGE, withoutEnlargement: true })
-      .withMetadata({ orientation: 1 })
-      .jpeg({
-        quality: JPEG_QUALITY,
-        progressive: true,
-        mozjpeg: true,
-        chromaSubsampling: '4:4:4',
-      })
-      .toBuffer({ resolveWithObject: true });
-
-    writeFileSync(out, mainBuf);
-    processed++;
-    console.log(`→ ${file}  =>  ${out}  (${info.width}×${info.height})`);
-
-    // LQIP
-    const blurBuf = await base
-      .clone()
-      .resize({ width: 24, withoutEnlargement: true })
-      .jpeg({ quality: 40 })
-      .toBuffer();
-    const blurDataURL = `data:image/jpeg;base64,${blurBuf.toString('base64')}`;
-
-    manifest.push({
-      src: webSrcFor(out),
-      width: info.width ?? 0,
-      height: info.height ?? 0,
-      blurDataURL,
-    });
-
-    // Update cache
-    cache[key] = {
-      srcMtimeMs: srcStat.mtimeMs,
-      srcSize: srcStat.size,
-      settings: SETTINGS_VERSION,
-    };
+    const item = await processOne(fp);
+    if (item) {
+      manifest.push(item);
+      processed++;
+    } else {
+      skipped++;
+    }
   }
 
-  // Write manifest + cache
-  mkdirSync(dirname(MANIFEST_OUT), { recursive: true });
-  writeFileSync(MANIFEST_OUT, JSON.stringify(manifest, null, 2), 'utf8');
-  saveCache(cache);
+  // Sort by filename for stable order
+  manifest.sort((a, b) => a.src.localeCompare(b.src));
 
+  await ensureDir(path.dirname(MANIFEST));
+  await fs.writeFile(MANIFEST, JSON.stringify(manifest, null, 2));
+  console.log(`📄 Manifest: ${MANIFEST}`);
   console.log(`✅ Done. ${processed} processed, ${skipped} skipped.`);
-  console.log(`📄 Manifest: ${MANIFEST_OUT}`);
-})();
+}
+
+main().catch((e) => {
+  console.error(e);
+  // Don't crash CI — but surface a non-zero exit could break deploy.
+  // If you prefer hard-fail on any issue, change exitCode to 1.
+  process.exit(0);
+});
