@@ -3,3 +3,12 @@
 *.png filter=lfs diff=lfs merge=lfs -text
 *.webp filter=lfs diff=lfs merge=lfs -text
 *.avif filter=lfs diff=lfs merge=lfs -text
+# (optional) keep originals in LFS
+originals/** filter=lfs diff=lfs merge=lfs -text
+
+# global LFS rules you may already have
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+
+# OVERRIDE: never use LFS for processed web images
+public/images/** -filter -diff -merge -text
