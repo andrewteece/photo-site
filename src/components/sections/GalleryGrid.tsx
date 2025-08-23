@@ -1,51 +1,65 @@
+'use client';
+
 import Image from 'next/image';
-import manifest from '@/lib/image-manifest.json';
-import { getCaptionFor } from '@/lib/captions';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import manifestJson from '@/lib/image-manifest.json';
+
+/** What we *want* to show in the grid (adjust order as you like) */
+const desired = [
+  '/images/portfolio/goldengate.jpg',
+  '/images/portfolio/morning-colors.jpg',
+  '/images/portfolio/calm-morning.jpg',
+  '/images/portfolio/morning-storm.jpg',
+  '/images/portfolio/dew.jpg',
+  '/images/portfolio/fern.jpg',
+];
 
 type ManifestItem = {
   src: string;
-  width: number;
-  height: number;
-  blurDataURL: string;
+  width?: number;
+  height?: number;
+  blurDataURL?: string;
 };
+const manifest = (manifestJson as ManifestItem[]) ?? [];
 
 export default function GalleryGrid() {
-  const photos = manifest as ManifestItem[];
+  // Build a stable list from manifest if available, else fall back to raw files
+  const items = useMemo(() => {
+    const map = new Map(manifest.map((m) => [m.src, m]));
+    return desired
+      .map((src) => map.get(src) ?? ({ src } as ManifestItem))
+      .filter((it) => !!it.src);
+  }, []);
 
   return (
-    <section className='container mx-auto px-6 py-14'>
-      <h2 className='text-xl md:text-2xl font-semibold mb-6'>Selected Work</h2>
+    <section className='py-14 md:py-20'>
+      <div className='container mx-auto px-6 md:px-8'>
+        <h2 className='mb-6 text-sm tracking-[0.18em] uppercase text-white/70'>
+          Selected Work
+        </h2>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-        {photos.map((p) => {
-          const meta = getCaptionFor(p.src);
-          return (
-            <figure
-              key={p.src}
-              className='overflow-hidden rounded-2xl shadow-lg'
-            >
-              <Image
-                src={p.src}
-                alt={meta.alt}
-                width={p.width}
-                height={p.height}
-                placeholder='blur'
-                blurDataURL={p.blurDataURL}
-                sizes='(min-width: 1024px) 33vw, (min-width: 640px) 48vw, 94vw'
-                quality={85}
-                className='object-cover w-full h-full transition-transform duration-500 hover:scale-[1.01]'
-              />
-              {/* Optional visible caption; remove if you want a cleaner grid */}
-              {meta.title && (
-                <figcaption className='text-sm text-muted-foreground px-2 py-2'>
-                  {meta.title}
-                  {meta.location ? ` — ${meta.location}` : ''}
-                  {meta.year ? `, ${meta.year}` : ''}
-                </figcaption>
-              )}
-            </figure>
-          );
-        })}
+        <ul className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+          {items.map((it) => (
+            <li key={it.src} className='group card overflow-hidden hover-lift'>
+              <Link href='/portfolio' className='block'>
+                <div className='relative aspect-[4/3]'>
+                  <Image
+                    src={it.src}
+                    alt=''
+                    fill
+                    sizes='(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw'
+                    placeholder={it.blurDataURL ? 'blur' : 'empty'}
+                    blurDataURL={it.blurDataURL}
+                    className='object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02]'
+                    quality={90}
+                    unoptimized /* ← guarantees display even if optimizer path fails */
+                  />
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
