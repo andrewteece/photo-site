@@ -1,8 +1,16 @@
+// next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    // Serve images directly (no /_next/image). Perfect for static public assets.
-    unoptimized: true,
+  images: { unoptimized: true },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'andrewteecephotography.com' }],
+        destination: 'https://www.andrewteecephotography.com/:path*',
+        permanent: true,
+      },
+    ];
   },
 };
 
