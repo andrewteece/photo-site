@@ -38,13 +38,13 @@ function manifestLooksValid() {
   }
 }
 
-function detectLFSPointers(dir) {
+function hasLFSPointers(dir) {
   if (!existsSync(dir)) return false;
   const files = readdirSync(dir).filter((f) => !f.startsWith('.'));
   for (const f of files) {
     const fp = path.join(dir, f);
     try {
-      const head = readFileSync(fp, { encoding: 'utf8' }).slice(0, 220);
+      const head = readFileSync(fp, { encoding: 'utf8' }).slice(0, 240);
       if (
         head.includes('git-lfs.github.com/spec/v1') &&
         head.includes('oid sha256:')
@@ -59,23 +59,25 @@ function detectLFSPointers(dir) {
 }
 
 try {
-  // 1) If processed outputs are already committed, just use them.
-  if (dirHasFiles(OUT_DIR) && manifestLooksValid()) {
+  const haveProcessed = dirHasFiles(OUT_DIR) && manifestLooksValid();
+  const haveOriginals = dirHasFiles(IN_DIR);
+
+  // If processed assets are committed, never rebuild on CI.
+  if (haveProcessed) {
     console.log(
-      'ℹ️  Processed images & manifest found — using committed assets (skipping prebuild).'
+      'ℹ️  Using committed /public/images + manifest (skipping image prebuild).'
     );
     process.exit(0);
   }
 
-  // 2) If no originals, we can’t build — continue silently.
-  const hasOriginals = dirHasFiles(IN_DIR);
-  if (!hasOriginals) {
+  // If no originals exist, nothing to do.
+  if (!haveOriginals) {
     console.log('ℹ️  No originals found; skipping image build.');
     process.exit(0);
   }
 
-  // 3) If originals are LFS pointers, try to fetch — may fail on Vercel (no remote).
-  if (detectLFSPointers(IN_DIR)) {
+  // If originals are LFS pointers, try to fetch; if still pointers, skip to avoid clobber.
+  if (hasLFSPointers(IN_DIR)) {
     console.log(
       'ℹ️  Git LFS pointers detected — attempting to fetch binaries…'
     );
@@ -84,7 +86,15 @@ try {
       execSync('git lfs pull', { stdio: 'inherit' });
       console.log('✅ Git LFS pull complete.');
     } catch {
-      console.warn('⚠️  git lfs pull failed; continuing without originals.');
+      console.warn('⚠️  git lfs pull failed.');
+    }
+
+    // Re-check after pull; if still pointers, skip pipeline
+    if (hasLFSPointers(IN_DIR)) {
+      console.warn(
+        '⚠️  Originals are still LFS pointers. Skipping image build to preserve existing manifest.'
+      );
+      process.exit(0);
     }
   }
 
