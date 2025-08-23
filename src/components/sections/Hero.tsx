@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import manifest from '@/lib/image-manifest.json';
+import { getCaptionFor } from '@/lib/captions';
 
-// Pick a subset of hero-worthy shots
 const heroSources = [
   '/images/portfolio/calm-morning.jpg',
   '/images/portfolio/goldengate.jpg',
@@ -18,31 +18,35 @@ const slides = heroSources
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
+  const prefersReduced = useReducedMotion();
+  if (slides.length === 0) return null;
 
   useEffect(() => {
+    if (prefersReduced) return;
     const id = setInterval(
       () => setIndex((i) => (i + 1) % slides.length),
       5500
     );
     return () => clearInterval(id);
-  }, []);
+  }, [prefersReduced]);
 
   const s = slides[index];
+  const meta = getCaptionFor(s.src);
 
   return (
     <section className='relative h-[70vh] md:h-screen overflow-hidden'>
       <AnimatePresence initial={false} mode='wait'>
         <motion.div
           key={s.src}
-          initial={{ opacity: 0, scale: 1.02 }}
+          initial={{ opacity: 0, scale: prefersReduced ? 1 : 1.02 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.8, ease: 'easeInOut' }}
+          exit={{ opacity: 0, scale: prefersReduced ? 1 : 0.98 }}
+          transition={{ duration: prefersReduced ? 0 : 0.8, ease: 'easeInOut' }}
           className='absolute inset-0'
         >
           <Image
             src={s.src}
-            alt=''
+            alt={meta.alt}
             fill
             priority
             placeholder='blur'
@@ -55,10 +59,15 @@ export default function Hero() {
         </motion.div>
       </AnimatePresence>
 
+      {/* caption only */}
       <div className='relative z-10 mx-auto max-w-5xl px-6 h-full flex items-end pb-10'>
-        <h1 className='text-2xl md:text-4xl font-semibold text-white drop-shadow'>
-          Andrew Teece — Photography
-        </h1>
+        <div className='bg-black/35 backdrop-blur rounded-xl px-4 py-2 text-white'>
+          <p className='text-sm md:text-base'>
+            {meta.title || meta.alt}
+            {meta.location ? ` — ${meta.location}` : ''}
+            {meta.year ? `, ${meta.year}` : ''}
+          </p>
+        </div>
       </div>
     </section>
   );

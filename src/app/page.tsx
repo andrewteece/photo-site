@@ -1,3 +1,4 @@
+import VisuallyHidden from '@/components/ui/VisuallyHidden';
 import { Shell } from '@/components/layout/Shell';
 import Hero from '@/components/sections/Hero';
 import GalleryGrid from '@/components/sections/GalleryGrid';
@@ -5,6 +6,9 @@ import GalleryGrid from '@/components/sections/GalleryGrid';
 export default function HomePage() {
   return (
     <>
+      {/* SEO/Accessibility: one page-level H1, visually hidden */}
+      <VisuallyHidden as='h1'>Andrew Teece — Photography</VisuallyHidden>
+
       <Hero />
 
       {/* INTRO COPY */}
