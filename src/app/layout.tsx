@@ -2,7 +2,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import Footer from '@/components/layout/footer';
 import { Inter, Fraunces } from 'next/font/google';
 import { ThemeScript } from '@/components/theme/ThemeScript';
 import Script from 'next/script';
