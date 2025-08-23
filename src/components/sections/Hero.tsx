@@ -3,8 +3,17 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import manifest from '@/lib/image-manifest.json';
+import manifestJson from '@/lib/image-manifest.json';
 import { getCaptionFor } from '@/lib/captions';
+
+type ManifestItem = {
+  src: string;
+  width: number;
+  height: number;
+  blurDataURL: string;
+};
+
+const manifest = manifestJson as ManifestItem[];
 
 const heroSources = [
   '/images/portfolio/calm-morning.jpg',
@@ -12,15 +21,14 @@ const heroSources = [
   '/images/portfolio/morning-colors.jpg',
 ];
 
-const slides = heroSources
-  .map((src) => manifest.find((m) => m.src === src))
-  .filter(Boolean) as typeof manifest;
+const slides: ManifestItem[] = heroSources
+  .map((src) => manifest.find((m) => m.src === src) || null)
+  .filter((m): m is ManifestItem => Boolean(m));
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const prefersReduced = useReducedMotion();
 
-  // Hooks must run before any early return
   useEffect(() => {
     if (prefersReduced || slides.length === 0) return;
     const id = setInterval(

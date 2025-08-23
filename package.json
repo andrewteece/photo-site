@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "node --experimental-modules scripts/prebuild-images.js",
+    "prebuild": "node scripts/prebuild-images.mjs",
     "build:images": "tsx scripts/build-images.ts",
     "dev": "node scripts/run-contentlayer.mjs && next dev",
     "build": "node scripts/run-contentlayer.mjs && next build",
