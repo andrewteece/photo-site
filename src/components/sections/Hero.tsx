@@ -3,21 +3,18 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import manifest from '@/lib/image-manifest.json';
 
-const slides = [
-  {
-    src: '/images/portfolio/sandwaves-bw.jpg',
-    alt: 'Wind-carved ripples in sand, black and white',
-  },
-  {
-    src: '/images/portfolio/sedona-bw.jpg',
-    alt: 'Long-exposure creek with fallen leaves, black and white',
-  },
-  {
-    src: '/images/portfolio/zion-color.jpg',
-    alt: 'Canyon wall with cottonwoods in autumn color, Zion',
-  },
+// Pick a subset of hero-worthy shots
+const heroSources = [
+  '/images/portfolio/calm-morning.jpg',
+  '/images/portfolio/goldengate.jpg',
+  '/images/portfolio/morning-colors.jpg',
 ];
+
+const slides = heroSources
+  .map((src) => manifest.find((m) => m.src === src))
+  .filter(Boolean) as typeof manifest;
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
@@ -30,26 +27,31 @@ export default function Hero() {
     return () => clearInterval(id);
   }, []);
 
+  const s = slides[index];
+
   return (
     <section className='relative h-[70vh] md:h-screen overflow-hidden'>
       <AnimatePresence initial={false} mode='wait'>
         <motion.div
-          key={slides[index].src}
+          key={s.src}
           initial={{ opacity: 0, scale: 1.02 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: 'easeInOut' }}
           className='absolute inset-0'
         >
           <Image
-            src={slides[index].src}
-            alt={slides[index].alt}
+            src={s.src}
+            alt=''
             fill
             priority
-            className='object-cover'
+            placeholder='blur'
+            blurDataURL={s.blurDataURL}
             sizes='100vw'
+            quality={90}
+            className='object-cover'
           />
-          <div className='absolute inset-0 bg-gradient-to-t from-black/40 to-transparent' />
+          <div className='absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent' />
         </motion.div>
       </AnimatePresence>
 
