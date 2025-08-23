@@ -11,12 +11,12 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-serif' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://andrewteece.com'), // ← your domain
+  metadataBase: new URL('https://andrewteecephotography.com.com'), // ← your domain
   title: {
     default: 'Andrew Teece — Photography',
     template: '%s — Andrew Teece Photography',
   },
-  description: 'Editorial & documentary-style photography.',
+  description: 'Landscape and Creative photography.',
   icons: {
     icon: '/brand/logo-mark-light.png',
     apple: '/brand/apple-touch-icon-180.png',
