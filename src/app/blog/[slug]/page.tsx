@@ -1,10 +1,32 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { allPosts } from 'contentlayer/generated';
 import { Mdx } from '@/components/mdx';
 import { Shell } from '@/components/layout/Shell';
 
 export async function generateStaticParams() {
   return allPosts.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = allPosts.find((p) => p.slug === slug);
+  if (!post) return {};
+  const cover = typeof post.cover === 'string' ? post.cover : undefined;
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description || '',
+      images: cover ? [{ url: cover }] : undefined,
+      type: 'article',
+    },
+  };
 }
 
 export default async function PostPage({
@@ -35,7 +57,7 @@ export default async function PostPage({
           )}
         </header>
 
-        {/* Cover image (optional) */}
+        {/* Optional cover image (expects a path under /public) */}
         {post.cover ? (
           <figure className='photo-frame mb-6 md:mb-8'>
             <img src={post.cover as string} alt='' />

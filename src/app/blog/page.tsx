@@ -46,7 +46,7 @@ export default async function BlogIndex({
             Journal
           </p>
           <h1 className='mt-2 text-3xl md:text-4xl font-serif font-semibold tracking-tight'>
-            Stories & Guides
+            Stories &amp; Guides
           </h1>
           <p className='mt-3 text-muted-foreground max-w-2xl'>
             Recent shoots, behind-the-scenes, and resources for clients.
@@ -91,8 +91,9 @@ export default async function BlogIndex({
             const url = (p as any).url ?? `/blog/${p.slug}`;
             return (
               <li key={p._id} className='group card overflow-hidden hover-lift'>
-                <Link href={url} className='block'>
-                  {p.cover ? (
+                {/* Standalone image link */}
+                {p.cover ? (
+                  <Link href={url} className='block'>
                     <div className='relative aspect-[4/3]'>
                       <Image
                         src={p.cover}
@@ -103,42 +104,46 @@ export default async function BlogIndex({
                         priority={false}
                       />
                     </div>
-                  ) : (
-                    <div className='h-40 bg-muted' />
+                  </Link>
+                ) : (
+                  <div className='h-40 bg-muted' />
+                )}
+
+                <div className='card-body'>
+                  <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                    <time dateTime={p.date}>{formatDate(p.date)}</time>
+                    {p.readingTime && <span>• {p.readingTime}</span>}
+                  </div>
+
+                  {/* Standalone title link */}
+                  <h2 className='mt-2 text-lg font-medium leading-snug'>
+                    <Link href={url} className='hover:underline'>
+                      {p.title}
+                    </Link>
+                  </h2>
+
+                  {p.description && (
+                    <p className='mt-2 line-clamp-3 text-sm text-muted-foreground'>
+                      {p.description}
+                    </p>
                   )}
 
-                  <div className='card-body'>
-                    <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                      <time dateTime={p.date}>{formatDate(p.date)}</time>
-                      {p.readingTime && <span>• {p.readingTime}</span>}
+                  {/* Tag links (not inside any other link) */}
+                  {p.tags?.length ? (
+                    <div className='mt-4 flex flex-wrap gap-2'>
+                      {p.tags.map((t) => (
+                        <Link
+                          key={t}
+                          href={`/blog?tag=${encodeURIComponent(t)}`}
+                          className='px-2.5 py-0.5 text-xs rounded-full border border-input bg-card hover:bg-accent transition-colors'
+                          aria-label={`Filter by ${t}`}
+                        >
+                          {t}
+                        </Link>
+                      ))}
                     </div>
-
-                    <h2 className='mt-2 text-lg font-medium leading-snug group-hover:underline'>
-                      {p.title}
-                    </h2>
-
-                    {p.description && (
-                      <p className='mt-2 line-clamp-3 text-sm text-muted-foreground'>
-                        {p.description}
-                      </p>
-                    )}
-
-                    {p.tags?.length ? (
-                      <div className='mt-4 flex flex-wrap gap-2'>
-                        {p.tags.map((t) => (
-                          <Link
-                            key={t}
-                            href={`/blog?tag=${encodeURIComponent(t)}`}
-                            className='px-2.5 py-0.5 text-xs rounded-full border border-input bg-card hover:bg-accent transition-colors'
-                            aria-label={`Filter by ${t}`}
-                          >
-                            {t}
-                          </Link>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                </Link>
+                  ) : null}
+                </div>
               </li>
             );
           })}

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { MobileMenu } from '@/components/layout/mobile-menu';
@@ -39,20 +38,13 @@ export function Header() {
         ].join(' ')}
         data-scrolled={scrolled ? 'true' : 'false'}
       >
-        {/* Brand */}
+        {/* Brand (single Link — no nested anchors) */}
         <Link
           href='/'
+          aria-label='Andrew Teece Photography — Home'
           className='flex items-center gap-2 group'
-          aria-label='Andrew Teece Photography – Home'
         >
-          {/* Brand */}
-          <Link
-            href='/'
-            aria-label='Andrew Teece Photography — Home'
-            className='flex items-center'
-          >
-            <LogoWordmark className='text-foreground' markSize={22} />
-          </Link>
+          <LogoWordmark className='text-foreground' markSize={22} />
           <span className='sr-only'>Andrew Teece Photography</span>
         </Link>
 
