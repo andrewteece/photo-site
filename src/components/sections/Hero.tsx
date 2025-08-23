@@ -19,16 +19,18 @@ const slides = heroSources
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const prefersReduced = useReducedMotion();
-  if (slides.length === 0) return null;
 
+  // Hooks must run before any early return
   useEffect(() => {
-    if (prefersReduced) return;
+    if (prefersReduced || slides.length === 0) return;
     const id = setInterval(
       () => setIndex((i) => (i + 1) % slides.length),
       5500
     );
     return () => clearInterval(id);
   }, [prefersReduced]);
+
+  if (slides.length === 0) return null;
 
   const s = slides[index];
   const meta = getCaptionFor(s.src);

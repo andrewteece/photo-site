@@ -1,73 +1,78 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { allPosts } from 'contentlayer/generated';
-import { Mdx } from '@/components/mdx';
+import Link from 'next/link';
 import { Shell } from '@/components/layout/Shell';
 
-export async function generateStaticParams() {
-  return allPosts.map((p) => ({ slug: p.slug }));
-}
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'About Andrew Teece — photographer focused on editorial, documentary, and landscape work.',
+};
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const post = allPosts.find((p) => p.slug === slug);
-  if (!post) return {};
-  const cover = typeof post.cover === 'string' ? post.cover : undefined;
-  return {
-    title: post.title,
-    description: post.description,
-    openGraph: {
-      title: post.title,
-      description: post.description || '',
-      images: cover ? [{ url: cover }] : undefined,
-      type: 'article',
-    },
-  };
-}
-
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = allPosts.find((p) => p.slug === slug);
-  if (!post) return notFound();
-
+export default function AboutPage() {
   return (
-    <article className='py-12 md:py-16'>
+    <section className='container mx-auto px-6 md:px-8 py-12 md:py-16'>
       <Shell size='tight'>
-        <header className='mb-6 md:mb-8'>
-          <time className='text-xs uppercase tracking-[0.18em] text-muted-foreground'>
-            {new Date(post.date).toLocaleDateString(undefined, {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
-          </time>
-          <h1 className='mt-2 text-3xl md:text-4xl font-serif font-semibold tracking-tight'>
-            {post.title}
-          </h1>
-          {post.description && (
-            <p className='mt-3 text-muted-foreground'>{post.description}</p>
-          )}
-        </header>
+        {/* Visible H1 (best practice for non-home pages) */}
+        <h1 className='font-serif text-3xl md:text-4xl tracking-tight'>
+          About
+        </h1>
 
-        {/* Optional cover image (expects a path under /public) */}
-        {post.cover ? (
-          <figure className='photo-frame mb-6 md:mb-8'>
-            <img src={post.cover as string} alt='' />
-          </figure>
-        ) : null}
+        <div className='prose prose-invert max-w-none mt-6'>
+          <p>
+            I’m Andrew Teece, a photographer focused on honest,
+            documentary-style work with a quiet, editorial sensibility. My
+            approach is simple: observe carefully, work with natural light
+            whenever possible, and make photographs that feel like the day—not a
+            photoshoot.
+          </p>
+          <p>
+            I’m drawn to textures, shadow, and the way small moments add up to a
+            larger story. Whether I’m in the city, the desert, or a quiet
+            morning by the water, I aim for images that age well—clean,
+            restrained, and grounded in place.
+          </p>
+        </div>
 
-        <div className='prose'>
-          <Mdx code={post.body.code} />
+        <div className='mt-8 flex flex-wrap gap-3'>
+          {/* Internal link -> Link */}
+          <Link
+            href='/portfolio'
+            className='inline-flex items-center rounded-full border border-white/20 px-4 py-2 hover:bg-white/10 transition'
+          >
+            View Portfolio
+          </Link>
+          {/* External/mailto can stay <a> */}
+          <a
+            href='mailto:hello@andrewteece.com'
+            className='inline-flex items-center rounded-full bg-brand px-4 py-2 text-black hover:opacity-90 transition'
+          >
+            Get in touch
+          </a>
+        </div>
+
+        <div className='mt-12 grid gap-6 md:grid-cols-3'>
+          <div className='rounded-2xl border border-white/10 p-5'>
+            <h2 className='text-lg font-medium mb-2'>Approach</h2>
+            <p className='text-sm text-muted-foreground'>
+              Natural light, minimal direction, patient timing. Clean color with
+              respect for the scene.
+            </p>
+          </div>
+          <div className='rounded-2xl border border-white/10 p-5'>
+            <h2 className='text-lg font-medium mb-2'>Focus</h2>
+            <p className='text-sm text-muted-foreground'>
+              Editorial &amp; documentary, landscapes, and quiet city moments.
+            </p>
+          </div>
+          <div className='rounded-2xl border border-white/10 p-5'>
+            <h2 className='text-lg font-medium mb-2'>Availability</h2>
+            <p className='text-sm text-muted-foreground'>
+              Based in the Midwest; available for select assignments and print
+              commissions.
+            </p>
+          </div>
         </div>
       </Shell>
-    </article>
+    </section>
   );
 }

@@ -1,37 +1,36 @@
-export function Footer() {
-  return (
-    <footer className='border-t'>
-      {/* Explicit centering to match <Shell> and Header */}
-      <div
-        className='w-full mx-auto px-4 md:px-8 max-w-6xl py-10
-                      text-sm text-muted-foreground
-                      flex flex-col gap-4 md:flex-row md:items-center md:justify-between'
-      >
-        <p>© {new Date().getFullYear()} Andrew Teece — Photography</p>
+import Link from 'next/link';
 
-        <nav aria-label='Footer' className='flex items-center gap-4'>
+export function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer className='mt-20 border-t border-white/10'>
+      <div className='container mx-auto px-6 md:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-4'>
+        <div className='text-sm text-white/70'>
+          © {year} Andrew Teece. All rights reserved.
+        </div>
+
+        <nav className='flex items-center gap-5 text-sm'>
+          <Link href='/portfolio' className='hover:underline'>
+            Portfolio
+          </Link>
+          <Link href='/blog' className='hover:underline'>
+            Journal
+          </Link>
+          <Link href='/about' className='hover:underline'>
+            About
+          </Link>
+          <Link href='/contact' className='hover:underline'>
+            Contact
+          </Link>
           <a
-            className='link-underline hover:text-foreground'
-            href='https://www.instagram.com/'
+            href='https://instagram.com'
             target='_blank'
-            rel='noopener noreferrer'
+            rel='noreferrer'
+            className='hover:underline'
           >
             Instagram
           </a>
-          <a
-            className='link-underline hover:text-foreground'
-            href='https://www.linkedin.com/in/andrewteece/'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            LinkedIn
-          </a>
-          <a className='link-underline hover:text-foreground' href='/blog'>
-            Blog
-          </a>
         </nav>
-
-        <p className='opacity-80'>Built with Next.js + Tailwind</p>
       </div>
     </footer>
   );

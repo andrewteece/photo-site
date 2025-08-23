@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Shell } from '@/components/layout/Shell';
 
 export const metadata: Metadata = {
@@ -33,12 +34,14 @@ export default function AboutPage() {
         </div>
 
         <div className='mt-8 flex flex-wrap gap-3'>
-          <a
+          {/* Internal link -> Link */}
+          <Link
             href='/portfolio'
             className='inline-flex items-center rounded-full border border-white/20 px-4 py-2 hover:bg-white/10 transition'
           >
             View Portfolio
-          </a>
+          </Link>
+          {/* External/mailto can stay <a> */}
           <a
             href='mailto:hello@andrewteece.com'
             className='inline-flex items-center rounded-full bg-brand px-4 py-2 text-black hover:opacity-90 transition'
@@ -47,7 +50,6 @@ export default function AboutPage() {
           </a>
         </div>
 
-        {/* Optional: services / approach bullets */}
         <div className='mt-12 grid gap-6 md:grid-cols-3'>
           <div className='rounded-2xl border border-white/10 p-5'>
             <h2 className='text-lg font-medium mb-2'>Approach</h2>

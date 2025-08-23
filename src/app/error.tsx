@@ -11,9 +11,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  // Log the error (swap for Sentry/TrackJS later if you like)
+  // Log the error (replace with Sentry/LogRocket later if desired)
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('App error boundary:', error);
   }, [error]);
 
@@ -29,7 +28,6 @@ export default function Error({
             An unexpected error occurred. You can try again, or head back home.
           </p>
 
-          {/* Actions */}
           <div className='mt-8 flex flex-wrap items-center justify-center gap-3'>
             <button
               onClick={() => reset()}
@@ -45,7 +43,6 @@ export default function Error({
             </Link>
           </div>
 
-          {/* Small print / contact */}
           <div className='mt-10 text-xs text-white/50 space-y-1'>
             <div>
               If this keeps happening,{' '}
@@ -57,7 +54,6 @@ export default function Error({
               </a>
               .
             </div>
-            {/* Optional: surface digest to help debugging without exposing details */}
             {error?.digest && <div>Error ID: {error.digest}</div>}
           </div>
         </div>

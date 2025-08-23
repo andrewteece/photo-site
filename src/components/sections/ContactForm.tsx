@@ -7,7 +7,6 @@ export default function ContactForm() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  // simple controlled fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -15,14 +14,13 @@ export default function ContactForm() {
   const [honeypot, setHoneypot] = useState(''); // should stay empty
 
   const canSubmit = useMemo(() => {
-    return name.trim() && email.trim() && message.trim();
+    return name.trim() !== '' && email.trim() !== '' && message.trim() !== '';
   }, [name, email, message]);
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    e.preventDefault(); // ensure 'e' is used and default submit is blocked
     setErr(null);
 
-    // basic checks
     if (honeypot) {
       setErr('Something went wrong. Please email me directly.');
       return;
@@ -32,7 +30,6 @@ export default function ContactForm() {
       return;
     }
 
-    // build a mailto link to open user's email app
     setBusy(true);
     try {
       const to = 'hello@andrewteece.com';
@@ -51,10 +48,9 @@ export default function ContactForm() {
         subj
       )}&body=${encodeURIComponent(body)}`;
 
-      // open email client
       window.location.href = href;
       setSent(true);
-    } catch (e) {
+    } catch {
       setErr('Could not open your email client. Please email me directly.');
     } finally {
       setBusy(false);
@@ -129,7 +125,7 @@ export default function ContactForm() {
           />
         </div>
 
-        {/* Honeypot anti-spam field (hidden from users) */}
+        {/* Honeypot anti-spam field (hidden) */}
         <div aria-hidden='true' className='hidden'>
           <label htmlFor='company'>Company</label>
           <input
@@ -143,7 +139,6 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* actions */}
       <div className='mt-5 flex items-center gap-3'>
         <button
           type='submit'
@@ -160,7 +155,6 @@ export default function ContactForm() {
         </a>
       </div>
 
-      {/* feedback */}
       {err && <p className='mt-3 text-sm text-red-400'>{err}</p>}
       {sent && (
         <p className='mt-3 text-sm text-emerald-400'>

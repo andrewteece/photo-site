@@ -1,11 +1,20 @@
-export default function VisuallyHidden({
-  as: Tag = 'span',
-  children,
+import type { ElementType, ComponentPropsWithoutRef } from 'react';
+
+type Props<T extends ElementType> = {
+  as?: T;
+  className?: string;
+  children: React.ReactNode;
+} & Omit<ComponentPropsWithoutRef<T>, 'as' | 'className' | 'children'>;
+
+export default function VisuallyHidden<T extends ElementType = 'span'>({
+  as,
   className = '',
-  ...props
-}: React.ComponentPropsWithoutRef<'span'> & { as?: any }) {
+  children,
+  ...rest
+}: Props<T>) {
+  const Tag = (as ?? 'span') as ElementType;
   return (
-    <Tag className={`sr-only ${className}`} {...props}>
+    <Tag className={`sr-only ${className}`} {...rest}>
       {children}
     </Tag>
   );
