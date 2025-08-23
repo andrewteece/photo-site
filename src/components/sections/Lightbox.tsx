@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { getCaptionFor } from '@/lib/captions';
@@ -28,8 +28,9 @@ export default function Lightbox({
   const item = items[index];
   const prefersReduced = useReducedMotion();
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const [showCaption, setShowCaption] = useState(true);
 
-  // Keyboard nav + ESC
+  // Keyboard nav + ESC + Caption toggle
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -37,12 +38,13 @@ export default function Lightbox({
       if (e.key === 'ArrowRight') onChange((index + 1) % items.length);
       if (e.key === 'ArrowLeft')
         onChange((index - 1 + items.length) % items.length);
+      if (e.key.toLowerCase() === 'c') setShowCaption((s) => !s);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, index, items.length, onChange, onClose]);
 
-  // Lock background scroll + focus Close
+  // Lock background scroll + focus Close on open
   useEffect(() => {
     if (!open) return;
     const original = document.body.style.overflow;
@@ -68,7 +70,7 @@ export default function Lightbox({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        // Close when clicking backdrop
+        // Close on backdrop click
         onClick={(e) => {
           if (e.currentTarget === e.target) onClose();
         }}
@@ -99,8 +101,8 @@ export default function Lightbox({
           ›
         </button>
 
-        {/* Image */}
-        <div className='absolute inset-0'>
+        {/* Image (stop click from bubbling to backdrop) */}
+        <div className='absolute inset-0' onClick={(e) => e.stopPropagation()}>
           <motion.div
             className='relative h-full w-full'
             initial={{ scale: prefersReduced ? 1 : 0.98, opacity: 0 }}
@@ -121,21 +123,24 @@ export default function Lightbox({
               sizes='100vw'
               quality={90}
               className='object-contain'
+              priority
             />
           </motion.div>
         </div>
 
-        {/* Caption / Counter */}
-        <div className='absolute bottom-4 left-1/2 -translate-x-1/2 text-white/90 text-sm px-3 py-2 rounded-md bg-black/40'>
-          <div className='text-center'>
-            {meta.title || meta.alt}
-            {meta.location ? ` — ${meta.location}` : ''}
-            {meta.year ? `, ${meta.year}` : ''}
+        {/* Caption / Counter (toggle with "c") */}
+        {showCaption && (
+          <div className='absolute bottom-4 left-1/2 -translate-x-1/2 text-white/90 text-sm px-3 py-2 rounded-md bg-black/40'>
+            <div className='text-center'>
+              {meta.title || meta.alt}
+              {meta.location ? ` — ${meta.location}` : ''}
+              {meta.year ? `, ${meta.year}` : ''}
+            </div>
+            <div className='mt-1 text-white/70 text-xs text-center'>
+              {index + 1} / {items.length} • Press “C” to toggle caption
+            </div>
           </div>
-          <div className='mt-1 text-white/70 text-xs text-center'>
-            {index + 1} / {items.length}
-          </div>
-        </div>
+        )}
       </motion.div>
     </AnimatePresence>
   );
