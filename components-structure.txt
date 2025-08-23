@@ -1,0 +1,17 @@
+src/components
+├── brand
+│   ├── LogoMark.tsx
+│   └── LogoWordmark.tsx
+├── layout
+│   ├── footer.tsx
+│   ├── header.tsx
+│   ├── mobile-menu.tsx
+│   ├── NavLink.tsx
+│   └── Shell.tsx
+├── mdx.tsx
+├── theme
+│   ├── ThemeScript.tsx
+│   └── ThemeToggle.tsx
+└── ui
+
+5 directories, 10 files
