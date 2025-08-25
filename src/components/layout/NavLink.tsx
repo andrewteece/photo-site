@@ -12,17 +12,15 @@ export function NavLink({
   className?: string;
 }) {
   const pathname = usePathname();
-  const active = pathname === href;
+  const active = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
       className={[
-        'link-underline',
-        active
-          ? 'text-foreground font-medium'
-          : 'text-foreground/80 hover:text-foreground',
+        'text-base font-medium transition-colors',
+        active ? 'text-foreground' : 'text-foreground/85 hover:text-foreground',
         className,
       ].join(' ')}
     >

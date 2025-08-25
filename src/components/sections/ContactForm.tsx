@@ -60,7 +60,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className='rounded-2xl border border-white/10 p-5'
+      className='rounded-2xl border border-zinc-900/10 dark:border-white/10 p-5'
       noValidate
     >
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>

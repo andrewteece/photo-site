@@ -41,6 +41,9 @@ importers:
       reading-time:
         specifier: ^1.5.0
         version: 1.5.0
+      simple-icons:
+        specifier: ^15.11.0
+        version: 15.11.0
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -2667,6 +2670,10 @@ packages:
   side-channel@1.1.0:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
+
+  simple-icons@15.11.0:
+    resolution: {integrity: sha512-hHgDvNcbIdE5e6thY19Ao1VEI4CectXDNB0+nXOLCBf3ApuzeMm4tAhWzeR9qZdt/GoeQs1nm9JTVzCVBuX1nA==}
+    engines: {node: '>=0.12.18'}
 
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
@@ -6010,6 +6017,8 @@ snapshots:
       side-channel-list: 1.0.0
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
+
+  simple-icons@15.11.0: {}
 
   simple-swizzle@0.2.2:
     dependencies:

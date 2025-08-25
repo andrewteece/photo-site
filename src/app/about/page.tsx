@@ -1,78 +1,47 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Shell } from '@/components/layout/Shell';
+import { site } from '@/lib/site';
+import { SocialLinks } from '@/components/ui/SocialIcons';
 
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Andrew Teece — photographer focused on editorial, documentary, and landscape work.',
+    'About Andrew Teece — photographer specializing in fine art landscapes and portrait commissions.',
 };
 
 export default function AboutPage() {
   return (
-    <section className='container mx-auto px-6 md:px-8 py-12 md:py-16'>
-      <Shell size='tight'>
-        {/* Visible H1 (best practice for non-home pages) */}
-        <h1 className='font-serif text-3xl md:text-4xl tracking-tight'>
+    <section className='py-14 md:py-20'>
+      <div className='container mx-auto max-w-3xl px-6 md:px-8'>
+        <h1 className='font-serif text-3xl md:text-4xl tracking-tight text-foreground'>
           About
         </h1>
 
-        <div className='prose prose-invert max-w-none mt-6'>
-          <p>
-            I’m Andrew Teece, a photographer focused on honest,
-            documentary-style work with a quiet, editorial sensibility. My
-            approach is simple: observe carefully, work with natural light
-            whenever possible, and make photographs that feel like the day—not a
-            photoshoot.
-          </p>
-          <p>
-            I’m drawn to textures, shadow, and the way small moments add up to a
-            larger story. Whether I’m in the city, the desert, or a quiet
-            morning by the water, I aim for images that age well—clean,
-            restrained, and grounded in place.
-          </p>
-        </div>
+        <p className='mt-5 text-foreground/80'>
+          I’m Andrew Teece, a photographer focused on fine art landscapes and
+          thoughtful portrait commissions. My work leans into quiet light, clean
+          geometry, and a sense of stillness.
+        </p>
 
-        <div className='mt-8 flex flex-wrap gap-3'>
-          {/* Internal link -> Link */}
-          <Link
-            href='/portfolio'
-            className='inline-flex items-center rounded-full border border-white/20 px-4 py-2 hover:bg-white/10 transition'
-          >
-            View Portfolio
-          </Link>
-          {/* External/mailto can stay <a> */}
+        <p className='mt-4 text-foreground/80'>
+          For collaborations, prints, or bookings, reach out at{' '}
           <a
-            href='mailto:hello@andrewteece.com'
-            className='inline-flex items-center rounded-full bg-brand px-4 py-2 text-black hover:opacity-90 transition'
+            className='underline hover:opacity-80'
+            href={`mailto:${site.email}`}
           >
-            Get in touch
+            {site.email}
           </a>
-        </div>
+          .
+        </p>
 
-        <div className='mt-12 grid gap-6 md:grid-cols-3'>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Approach</h2>
-            <p className='text-sm text-muted-foreground'>
-              Natural light, minimal direction, patient timing. Clean color with
-              respect for the scene.
-            </p>
+        <div className='mt-8'>
+          <div className='text-xs uppercase tracking-widest text-muted-foreground'>
+            Find me
           </div>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Focus</h2>
-            <p className='text-sm text-muted-foreground'>
-              Editorial &amp; documentary, landscapes, and quiet city moments.
-            </p>
-          </div>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Availability</h2>
-            <p className='text-sm text-muted-foreground'>
-              Based in the Midwest; available for select assignments and print
-              commissions.
-            </p>
+          <div className='mt-3'>
+            <SocialLinks />
           </div>
         </div>
-      </Shell>
+      </div>
     </section>
   );
 }

@@ -16,14 +16,17 @@ const desired = [
 export default function GalleryGrid() {
   return (
     <section className='py-14 md:py-20'>
-      <div className='container mx-auto px-6 md:px-8'>
-        <h2 className='mb-6 text-sm tracking-[0.18em] uppercase text-white/70'>
+      <div className='mx-auto max-w-6xl px-6 md:px-8'>
+        <h2 className='mb-6 text-sm tracking-[0.18em] uppercase text-zinc-600 dark:text-white/70'>
           Selected Work
         </h2>
 
         <ul className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {desired.map((src) => (
-            <li key={src} className='group card overflow-hidden hover-lift'>
+            <li
+              key={src}
+              className='group overflow-hidden rounded-2xl ring-1 ring-zinc-900/10 bg-white dark:ring-white/10 dark:bg-white/[0.03]'
+            >
               <Link href='/portfolio' className='block'>
                 <div className='relative aspect-[4/3]'>
                   <img

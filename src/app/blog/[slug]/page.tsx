@@ -1,78 +1,132 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Shell } from '@/components/layout/Shell';
+import type { Metadata, Viewport } from 'next';
+import { notFound } from 'next/navigation';
+import { allPosts } from 'contentlayer/generated';
+import { Mdx } from '@/components/mdx';
+import { PostPager } from '@/components/blog/PostPager';
+import { PostMeta } from '@/components/blog/PostMeta';
+import { readingTimeFromText } from '@/lib/readingTime';
+import { site } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'About',
-  description:
-    'About Andrew Teece — photographer focused on editorial, documentary, and landscape work.',
-};
+export async function generateStaticParams() {
+  return allPosts.map((p) => ({
+    slug: (p as any).slug ?? (p as any).slugAsParams,
+  }));
+}
 
-export default function AboutPage() {
+// ✅ Page-level metadata (no themeColor here)
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const post =
+    allPosts.find(
+      (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
+    ) ?? null;
+
+  if (!post) return {};
+
+  const url = `/blog/${slug}`;
+  const image = `/blog/${slug}/opengraph-image`;
+
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      type: 'article',
+      url,
+      title: post.title,
+      description: post.description,
+      siteName: site.brand,
+      publishedTime: post.date,
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [image],
+    },
+  };
+}
+
+// ▶︎ OPTIONAL: If you want a page-specific theme color for the address bar,
+// move it to viewport (this is allowed at the page level).
+export function generateViewport(): Viewport {
+  return {
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+      { media: '(prefers-color-scheme: dark)', color: '#0b0b0c' },
+    ],
+  };
+}
+
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const post =
+    allPosts.find(
+      (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
+    ) ?? null;
+
+  if (!post) return notFound();
+
+  // Reading time
+  const source: string =
+    (post as any).body?.raw ?? (post as any).body?.code ?? '';
+  const { minutes } = readingTimeFromText(source);
+
+  // Prev/next (newest -> oldest)
+  const posts = [...allPosts].sort(
+    (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+  );
+  const idx = posts.findIndex(
+    (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
+  );
+  const prevPost = idx > 0 ? posts[idx - 1] : undefined;
+  const nextPost =
+    idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
+
   return (
-    <section className='container mx-auto px-6 md:px-8 py-12 md:py-16'>
-      <Shell size='tight'>
-        {/* Visible H1 (best practice for non-home pages) */}
-        <h1 className='font-serif text-3xl md:text-4xl tracking-tight'>
-          About
+    <article className='container mx-auto max-w-3xl px-6 md:px-8 py-12 md:py-16'>
+      <header>
+        <h1 className='font-serif text-3xl md:text-4xl tracking-tight text-foreground'>
+          {post.title}
         </h1>
+        {post.description && (
+          <p className='mt-2 text-muted-foreground'>{post.description}</p>
+        )}
+        <PostMeta dateISO={post.date} minutes={minutes} title={post.title} />
+      </header>
 
-        <div className='prose prose-invert max-w-none mt-6'>
-          <p>
-            I’m Andrew Teece, a photographer focused on honest,
-            documentary-style work with a quiet, editorial sensibility. My
-            approach is simple: observe carefully, work with natural light
-            whenever possible, and make photographs that feel like the day—not a
-            photoshoot.
-          </p>
-          <p>
-            I’m drawn to textures, shadow, and the way small moments add up to a
-            larger story. Whether I’m in the city, the desert, or a quiet
-            morning by the water, I aim for images that age well—clean,
-            restrained, and grounded in place.
-          </p>
-        </div>
+      <div className='prose prose-lg mt-8 max-w-none'>
+        <Mdx code={(post as any).body.code} />
+      </div>
 
-        <div className='mt-8 flex flex-wrap gap-3'>
-          {/* Internal link -> Link */}
-          <Link
-            href='/portfolio'
-            className='inline-flex items-center rounded-full border border-white/20 px-4 py-2 hover:bg-white/10 transition'
-          >
-            View Portfolio
-          </Link>
-          {/* External/mailto can stay <a> */}
-          <a
-            href='mailto:hello@andrewteece.com'
-            className='inline-flex items-center rounded-full bg-brand px-4 py-2 text-black hover:opacity-90 transition'
-          >
-            Get in touch
-          </a>
-        </div>
-
-        <div className='mt-12 grid gap-6 md:grid-cols-3'>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Approach</h2>
-            <p className='text-sm text-muted-foreground'>
-              Natural light, minimal direction, patient timing. Clean color with
-              respect for the scene.
-            </p>
-          </div>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Focus</h2>
-            <p className='text-sm text-muted-foreground'>
-              Editorial &amp; documentary, landscapes, and quiet city moments.
-            </p>
-          </div>
-          <div className='rounded-2xl border border-white/10 p-5'>
-            <h2 className='text-lg font-medium mb-2'>Availability</h2>
-            <p className='text-sm text-muted-foreground'>
-              Based in the Midwest; available for select assignments and print
-              commissions.
-            </p>
-          </div>
-        </div>
-      </Shell>
-    </section>
+      <PostPager
+        prev={
+          prevPost
+            ? {
+                title: prevPost.title,
+                slug: (prevPost as any).slug ?? (prevPost as any).slugAsParams,
+              }
+            : undefined
+        }
+        next={
+          nextPost
+            ? {
+                title: nextPost.title,
+                slug: (nextPost as any).slug ?? (nextPost as any).slugAsParams,
+              }
+            : undefined
+        }
+      />
+    </article>
   );
 }

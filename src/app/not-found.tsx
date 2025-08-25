@@ -23,7 +23,7 @@ export default function NotFound() {
             </Link>
             <Link
               href='/portfolio'
-              className='inline-flex items-center rounded-full border border-white/20 px-5 py-2 hover:bg-white/10 transition'
+              className='inline-flex items-center rounded-full border border-white/20 px-5 py-2 hover:bg-zinc-900/[0.06] dark:hover:bg-white/10 transition'
             >
               View portfolio
             </Link>

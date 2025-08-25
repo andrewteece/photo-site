@@ -1,83 +1,94 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Image from 'next/image';
 import { allPosts } from 'contentlayer/generated';
-import { Mdx } from '@/components/mdx';
 import { Shell } from '@/components/layout/Shell';
 
-export async function generateStaticParams() {
-  return allPosts.map((p) => ({ slug: p.slug }));
-}
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: 'Notes on light, process, and recent work.',
+};
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const post = allPosts.find((p) => p.slug === slug);
-  if (!post) return {};
-  const cover = typeof post.cover === 'string' ? post.cover : undefined;
-  return {
-    title: post.title,
-    description: post.description,
-    openGraph: {
-      title: post.title,
-      description: post.description || '',
-      images: cover ? [{ url: cover }] : undefined,
-      type: 'article',
-    },
-  };
-}
-
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = allPosts.find((p) => p.slug === slug);
-  if (!post) return notFound();
+export default function BlogIndex() {
+  const posts = [...allPosts].sort((a, b) => {
+    const ad = new Date(a.date || 0).getTime();
+    const bd = new Date(b.date || 0).getTime();
+    return bd - ad;
+  });
 
   return (
-    <article className='py-12 md:py-16'>
+    <section className='py-14 md:py-20'>
       <Shell size='tight'>
-        <header className='mb-6 md:mb-8'>
-          <time className='text-xs uppercase tracking-[0.18em] text-muted-foreground'>
-            {new Date(post.date).toLocaleDateString(undefined, {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
-          </time>
-          <h1 className='mt-2 text-3xl md:text-4xl font-serif font-semibold tracking-tight'>
-            {post.title}
-          </h1>
-          {post.description && (
-            <p className='mt-3 text-muted-foreground'>{post.description}</p>
-          )}
-        </header>
+        <h1 className='font-serif text-3xl md:text-4xl tracking-tight text-foreground'>
+          Blog
+        </h1>
 
-        {/* Optional cover image */}
-        {post.cover ? (
-          <figure className='photo-frame mb-6 md:mb-8'>
-            <div className='relative aspect-[4/3]'>
-              <Image
-                src={post.cover as string}
-                alt=''
-                fill
-                sizes='100vw'
-                className='object-cover rounded-xl'
-                priority={false}
-              />
+        {posts.length === 0 ? (
+          <div className='mt-8 rounded-xl border border-border bg-card p-6'>
+            <p className='text-foreground/80'>
+              No posts yet. I’ll share notes on light, process, and recent work
+              here soon.
+            </p>
+            <div className='mt-4 flex gap-3'>
+              <Link href='/portfolio' className='btn btn-primary'>
+                View portfolio
+              </Link>
+              <Link href='/contact' className='btn btn-outline'>
+                Contact
+              </Link>
             </div>
-          </figure>
-        ) : null}
+          </div>
+        ) : (
+          <ul className='mt-8 grid gap-6 sm:grid-cols-2'>
+            {posts.map((p) => {
+              const url = `/blog/${(p as any).slug ?? (p as any).slugAsParams}`;
+              return (
+                <li key={p._id} className='card hover-lift overflow-hidden'>
+                  <Link href={url} className='block'>
+                    {p.cover ? (
+                      <div className='relative aspect-[4/3]'>
+                        <Image
+                          src={p.cover as string}
+                          alt={p.title}
+                          fill
+                          sizes='(min-width:1024px) 50vw, 100vw'
+                          className='object-cover'
+                        />
+                      </div>
+                    ) : (
+                      <div className='h-40 bg-muted' />
+                    )}
 
-        <div className='prose'>
-          <Mdx code={post.body.code} />
-        </div>
+                    <div className='card-body'>
+                      <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                        {p.date && (
+                          <time dateTime={p.date}>
+                            {new Date(p.date).toLocaleDateString(undefined, {
+                              month: 'long',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })}
+                          </time>
+                        )}
+                      </div>
+
+                      <h2 className='mt-2 text-lg font-medium leading-snug hover:underline text-foreground'>
+                        {p.title}
+                      </h2>
+
+                      {p.description && (
+                        <p className='mt-2 line-clamp-3 text-sm text-foreground/80'>
+                          {p.description}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Shell>
-    </article>
+    </section>
   );
 }

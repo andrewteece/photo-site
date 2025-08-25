@@ -1,13 +1,13 @@
+// components/theme/ThemeToggle.tsx
 'use client';
 import { useEffect, useState } from 'react';
 
-/** Internal, unoverrideable square button styles */
 const SQUARE =
   'appearance-none select-none grid place-items-center h-10 w-10 aspect-square p-0 rounded-lg ' +
-  'border border-input hover:bg-accent transition-colors duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ' +
+  'border border-border text-foreground/80 hover:bg-muted transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ' +
   'motion-reduce:transition-none';
-
-const ACTIVE = 'ring-2 ring-ring ring-offset-2 ring-offset-background';
+const ACTIVE = 'ring-2 ring-ring';
 
 export function ThemeToggle({ withSystem = false }: { withSystem?: boolean }) {
   const [mounted, setMounted] = useState(false);
@@ -33,7 +33,7 @@ export function ThemeToggle({ withSystem = false }: { withSystem?: boolean }) {
 
   if (!mounted) {
     return (
-      <button className={SQUARE} aria-disabled='true'>
+      <button className={SQUARE} aria-disabled='true' title='Toggle theme'>
         <SunIcon className='h-5 w-5' />
         <span className='sr-only'>Toggle theme</span>
       </button>
@@ -96,8 +96,8 @@ export function ThemeToggle({ withSystem = false }: { withSystem?: boolean }) {
   );
 }
 
-/* Inline icons */
-function SunIcon({ className = '' }) {
+/* Inline icons (valid JSX) */
+function SunIcon({ className = '' }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -105,11 +105,7 @@ function SunIcon({ className = '' }) {
       fill='none'
       aria-hidden='true'
     >
-      <path
-        d='M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z'
-        stroke='currentColor'
-        strokeWidth='1.5'
-      />
+      <circle cx='12' cy='12' r='6' stroke='currentColor' strokeWidth='1.5' />
       <path
         d='M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42'
         stroke='currentColor'
@@ -119,7 +115,7 @@ function SunIcon({ className = '' }) {
     </svg>
   );
 }
-function MoonIcon({ className = '' }) {
+function MoonIcon({ className = '' }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -137,7 +133,7 @@ function MoonIcon({ className = '' }) {
     </svg>
   );
 }
-function LaptopIcon({ className = '' }) {
+function LaptopIcon({ className = '' }: { className?: string }) {
   return (
     <svg
       className={className}

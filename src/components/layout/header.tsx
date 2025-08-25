@@ -1,78 +1,110 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { site } from '@/lib/site';
+import { SocialLinks } from '@/components/ui/SocialIcons';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { MobileMenu } from '@/components/layout/mobile-menu';
-import { NavLink } from '@/components/layout/NavLink';
-import { LogoWordmark } from '@/components/brand/LogoWordmark';
 
-export function Header() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
+function NavItem({
+  href,
+  children,
+  active,
+}: {
+  href: string;
+  children: React.ReactNode;
+  active: boolean;
+}) {
   return (
-    <header
-      data-scrolled={scrolled ? 'true' : 'false'}
+    <Link
+      href={href}
       className={[
-        'sticky top-0 z-50 w-full border-b',
-        'bg-background/80 backdrop-blur',
-        'transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
-        scrolled ? 'shadow-[0_6px_24px_rgba(0,0,0,0.08)]' : 'shadow-none',
+        'relative group transition-colors',
+        'text-base font-medium',
+        active ? 'text-foreground' : 'text-foreground/85 hover:text-foreground',
       ].join(' ')}
     >
-      {/* Explicit centering to match <Shell /> */}
-      <div
+      <span className='relative z-10'>{children}</span>
+      <span
         className={[
-          'w-full mx-auto px-4 md:px-8',
-          'max-w-6xl',
-          'flex items-center justify-between',
-          'h-16 data-[scrolled=true]:h-14',
-          'transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
+          'pointer-events-none absolute -bottom-1 left-0 h-[2px] rounded',
+          'bg-foreground/70 transition-[width] duration-200 ease-out',
+          active ? 'w-full' : 'w-0 group-hover:w-full',
         ].join(' ')}
-        data-scrolled={scrolled ? 'true' : 'false'}
-      >
-        {/* Brand (single Link — no nested anchors) */}
+      />
+    </Link>
+  );
+}
+
+export function Header() {
+  const pathname = usePathname();
+
+  return (
+    <header className='sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8'>
         <Link
           href='/'
-          aria-label='Andrew Teece Photography — Home'
-          className='flex items-center gap-2 group'
+          className='font-serif text-xl tracking-tight hover:opacity-90 text-foreground'
         >
-          <LogoWordmark className='text-foreground' markSize={22} />
-          <span className='sr-only'>Andrew Teece Photography</span>
+          {site.brand}
         </Link>
 
-        {/* Desktop nav */}
-        <nav className='hidden md:flex items-center gap-6 text-sm'>
-          <NavLink href='/portfolio' className='link-underline'>
-            Portfolio
-          </NavLink>
-          <NavLink href='/services' className='link-underline'>
-            Services
-          </NavLink>
-          <NavLink href='/about' className='link-underline'>
-            About
-          </NavLink>
-          <NavLink href='/blog' className='link-underline'>
-            Blog
-          </NavLink>
-          <NavLink href='/contact' className='btn btn-primary'>
-            Contact
-          </NavLink>
-          <ThemeToggle withSystem />
+        {/* Desktop */}
+        <nav aria-label='Primary' className='hidden items-center gap-8 md:flex'>
+          {site.nav.map(({ label, href }) => {
+            const active =
+              href === '/'
+                ? pathname === '/'
+                : pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <NavItem key={href} href={href} active={active}>
+                {label}
+              </NavItem>
+            );
+          })}
+          <div className='ml-2 flex items-center gap-3.5'>
+            <SocialLinks size={24} gap='gap-3' />
+            <ThemeToggle />
+          </div>
         </nav>
 
-        {/* Mobile actions */}
-        <div className='md:hidden flex items-center gap-2'>
-          <ThemeToggle />
-          <MobileMenu />
-        </div>
+        {/* Mobile */}
+        <nav aria-label='Primary' className='md:hidden'>
+          <details className='group relative'>
+            <summary className='cursor-pointer text-base font-medium text-foreground/90'>
+              Menu
+            </summary>
+            <div className='absolute right-0 mt-3 w-72 rounded-xl border border-border bg-background/95 p-3 shadow-xl'>
+              <ul className='space-y-1'>
+                {site.nav.map(({ label, href }) => {
+                  const active =
+                    href === '/'
+                      ? pathname === '/'
+                      : pathname === href || pathname.startsWith(`${href}/`);
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className={[
+                          'block rounded-lg px-3 py-2 text-base',
+                          active
+                            ? 'text-foreground bg-muted/40'
+                            : 'text-foreground/85 hover:bg-muted/40 hover:text-foreground',
+                        ].join(' ')}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className='mt-3 border-t border-border pt-3 flex items-center justify-between'>
+                <SocialLinks size={24} />
+                <ThemeToggle />
+              </div>
+            </div>
+          </details>
+        </nav>
       </div>
     </header>
   );
