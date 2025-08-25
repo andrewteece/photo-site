@@ -1,13 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { getCaptionFor } from '@/lib/captions';
 
 type Slide = { src: string };
 
-// Keep this list small for LCP
 const heroSources: Slide[] = [
   { src: '/images/portfolio/calm-morning.jpg' },
   { src: '/images/portfolio/goldengate.jpg' },
@@ -22,7 +21,6 @@ export default function Hero() {
 
   const canAnimate = slides.length > 1 && !prefersReduced;
 
-  // Auto-advance (paused while hovered)
   useEffect(() => {
     if (!canAnimate || hovered) return;
     const id = setInterval(
@@ -32,7 +30,6 @@ export default function Hero() {
     return () => clearInterval(id);
   }, [canAnimate, hovered, slides.length]);
 
-  // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') setIndex((i) => (i + 1) % slides.length);
@@ -49,20 +46,14 @@ export default function Hero() {
   const meta = getCaptionFor(s.src);
 
   const Img = (
-    <img
+    <Image
       src={s.src}
       alt={meta.alt || 'Featured photograph'}
-      decoding='async'
-      loading='eager'
-      fetchPriority='high'
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        display: 'block',
-      }}
+      fill
+      priority
+      quality={80}
+      sizes='100vw'
+      className='object-cover block transition-transform group-hover:scale-[1.02]'
     />
   );
 
@@ -73,7 +64,6 @@ export default function Hero() {
     <section
       className={[
         'group/hero relative overflow-hidden',
-        // refined, responsive height
         'h-[45vh] md:h-[58vh] lg:h-[64vh] xl:h-[68vh]',
         'min-h-[320px] max-h-[760px]',
       ].join(' ')}
@@ -81,7 +71,6 @@ export default function Hero() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Slides */}
       {canAnimate ? (
         <AnimatePresence initial={false} mode='wait'>
           <motion.div
@@ -122,10 +111,9 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Controls (visible on mobile, fade in on hover desktop) */}
+      {/* Prev/Next + Dots (unchanged) */}
       {slides.length > 1 && (
         <>
-          {/* Prev */}
           <button
             type='button'
             onClick={prev}
@@ -143,7 +131,6 @@ export default function Hero() {
             <ChevronLeft className='h-5 w-5' />
           </button>
 
-          {/* Next */}
           <button
             type='button'
             onClick={next}
@@ -161,7 +148,6 @@ export default function Hero() {
             <ChevronRight className='h-5 w-5' />
           </button>
 
-          {/* Dots */}
           <div className='pointer-events-auto absolute bottom-3 left-1/2 z-10 -translate-x-1/2'>
             <ul className='flex items-center gap-2'>
               {slides.map((_, i) => {
@@ -191,7 +177,6 @@ export default function Hero() {
   );
 }
 
-/* Inline chevrons (stroke follows currentColor) */
 function ChevronLeft({ className = '' }: { className?: string }) {
   return (
     <svg
