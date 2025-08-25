@@ -1,17 +1,41 @@
 import type { MetadataRoute } from 'next';
+import { allPosts, Post } from 'contentlayer/generated';
+
+interface PostMaybeSlug extends Post {
+  slugAsParams?: string;
+}
+const slugOf = (p: Post): string =>
+  (p as PostMaybeSlug).slug ?? (p as PostMaybeSlug).slugAsParams ?? '';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://andrewteece.com'; // set to your domain
-  const routes: MetadataRoute.Sitemap = [
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://www.andrewteecephotography.com';
+  const now = new Date();
+
+  const staticRoutes = [
     '',
     '/portfolio',
+    '/services',
+    '/about',
     '/blog',
     '/contact',
-  ].map((p) => ({
-    url: `${base}${p}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
+  ];
+  const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((p) => ({
+    url: `${base}${p || '/'}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
     priority: p === '' ? 1 : 0.7,
   }));
-  return routes;
+
+  const postEntries: MetadataRoute.Sitemap = [...allPosts]
+    .filter((p) => !(p as any).draft)
+    .map((p) => ({
+      url: `${base}/blog/${slugOf(p)}`,
+      lastModified: p.date ? new Date(p.date) : now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    }));
+
+  return [...staticEntries, ...postEntries];
 }

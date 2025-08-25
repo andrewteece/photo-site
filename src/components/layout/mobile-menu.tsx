@@ -2,16 +2,26 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const pathname = usePathname();
+
+  const close = () => setOpen(false);
+
+  // Close when the route changes (covers back/forward, programmatic nav, etc.)
+  useEffect(() => {
+    if (open) close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   // Close on Escape
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') close();
     }
     if (open) document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -22,7 +32,7 @@ export function MobileMenu() {
     if (!open && buttonRef.current) buttonRef.current.focus();
   }, [open]);
 
-  // Click outside to close
+  // Click outside to close (but ignore when clicking inside the panel)
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (
@@ -30,7 +40,7 @@ export function MobileMenu() {
         panelRef.current &&
         !panelRef.current.contains(e.target as Node)
       ) {
-        setOpen(false);
+        close();
       }
     }
     if (open) document.addEventListener('mousedown', onClick);
@@ -84,7 +94,7 @@ export function MobileMenu() {
 
   return (
     <>
-      {/* Square burger button (no btn classes) */}
+      {/* Burger */}
       <button
         ref={buttonRef}
         type='button'
@@ -148,7 +158,7 @@ export function MobileMenu() {
           <button
             className='grid h-10 w-10 place-items-center rounded-lg hover:bg-accent'
             aria-label='Close menu'
-            onClick={() => setOpen(false)}
+            onClick={close}
           >
             <svg
               className='h-5 w-5'
@@ -177,8 +187,9 @@ export function MobileMenu() {
               <li key={href}>
                 <Link
                   href={href}
+                  // Capture the click to close before navigation kicks off
+                  onClickCapture={close}
                   className='flex items-center justify-between rounded-xl px-3 py-2 hover:bg-accent transition-colors'
-                  onClick={() => setOpen(false)}
                 >
                   <span>{label}</span>
                   <svg
@@ -201,8 +212,8 @@ export function MobileMenu() {
             <li className='pt-2'>
               <Link
                 href='/contact'
+                onClickCapture={close}
                 className='btn btn-primary w-full'
-                onClick={() => setOpen(false)}
               >
                 Contact
               </Link>

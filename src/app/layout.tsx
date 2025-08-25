@@ -5,14 +5,15 @@ import Footer from '@/components/layout/footer';
 import { Inter, Fraunces } from 'next/font/google';
 import { ThemeScript } from '@/components/theme/ThemeScript';
 import Script from 'next/script';
+import { site } from '@/lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-serif' });
 
-// Use your deployed URL in env for absolute OG/Twitter images
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://andrewteece.com';
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.andrewteecephotography.com';
 
-// ✅ MOVE themeColor to viewport (allowed at layout/page level)
+// Move themeColor to viewport (Next 15)
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
@@ -25,8 +26,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Andrew Teece — Photography',
-    template: '%s — Andrew Teece Photography',
+    default: `${site.brand}`,
+    template: `%s — ${site.brand}`,
   },
   description: 'Fine art landscapes and portrait commissions.',
   icons: {
@@ -67,18 +68,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: baseUrl,
-    siteName: 'Andrew Teece Photography',
-    title: 'Andrew Teece — Photography',
+    siteName: site.brand,
+    title: site.brand,
     description: 'Fine art landscapes and portrait commissions.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Andrew Teece — Photography',
+    title: site.brand,
     description: 'Fine art landscapes and portrait commissions.',
     images: ['/opengraph-image'],
   },
-  alternates: { canonical: '/' },
+  alternates: {
+    canonical: '/',
+    types: {
+      'application/rss+xml': '/feed.xml', // RSS autodiscovery
+    },
+  },
 };
 
 export default function RootLayout({
@@ -107,7 +113,7 @@ export default function RootLayout({
             name: 'Andrew Teece',
             jobTitle: 'Photographer',
             url: baseUrl,
-            brand: { '@type': 'Brand', name: 'Andrew Teece Photography' },
+            brand: { '@type': 'Brand', name: site.brand },
           })}
         </Script>
 
@@ -120,7 +126,7 @@ export default function RootLayout({
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'Andrew Teece — Photography',
+            name: site.brand,
             url: baseUrl,
             potentialAction: {
               '@type': 'SearchAction',

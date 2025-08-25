@@ -1,8 +1,11 @@
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://www.andrewteecephotography.com';
   return {
-    rules: [{ userAgent: '*', allow: '/' }],
-    sitemap: 'https://andrewteece.com/sitemap.xml', // set to your domain
+    rules: { userAgent: '*', allow: '/' },
+    sitemap: `${base}/sitemap.xml`,
   };
 }

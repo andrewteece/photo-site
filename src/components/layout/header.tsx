@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { site } from '@/lib/site';
 import { SocialLinks } from '@/components/ui/SocialIcons';
@@ -39,6 +40,25 @@ function NavItem({
 export function Header() {
   const pathname = usePathname();
 
+  // <details> controller for mobile
+  const menuRef = useRef<HTMLDetailsElement | null>(null);
+  const closeMenu = () => {
+    if (menuRef.current && menuRef.current.open) menuRef.current.open = false;
+  };
+
+  // Close on route change
+  useEffect(() => {
+    closeMenu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && closeMenu();
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
     <header className='sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
       <div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8'>
@@ -70,11 +90,78 @@ export function Header() {
 
         {/* Mobile */}
         <nav aria-label='Primary' className='md:hidden'>
-          <details className='group relative'>
-            <summary className='cursor-pointer text-base font-medium text-foreground/90'>
-              Menu
+          {/* Hide the default ▼ marker on summary */}
+          <details
+            ref={menuRef}
+            className='group relative [&>summary::-webkit-details-marker]:hidden'
+          >
+            <summary aria-haspopup='menu' className='list-none'>
+              {/* Trigger button look */}
+              <span
+                className={[
+                  'inline-flex items-center gap-2 rounded-xl border border-input',
+                  'bg-background/80 px-3 py-2 shadow-sm',
+                  'text-base text-foreground/90',
+                  'transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]',
+                  'hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                ].join(' ')}
+              >
+                {/* Hamburger -> X */}
+                <span
+                  aria-hidden
+                  className='relative grid h-5 w-6 place-items-center'
+                >
+                  <span
+                    className={[
+                      'absolute left-1/2 top-0 block h-[2px] w-6 -translate-x-1/2 rounded bg-foreground',
+                      'transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]',
+                      'group-open:translate-y-2.5 group-open:rotate-45',
+                    ].join(' ')}
+                  />
+                  <span
+                    className={[
+                      'absolute left-1/2 top-1/2 block h-[2px] w-6 -translate-x-1/2 -translate-y-1/2 rounded bg-foreground',
+                      'transition-opacity duration-400 ease-out',
+                      'group-open:opacity-0',
+                    ].join(' ')}
+                  />
+                  <span
+                    className={[
+                      'absolute left-1/2 bottom-0 block h-[2px] w-6 -translate-x-1/2 rounded bg-foreground',
+                      'transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]',
+                      'group-open:-translate-y-2.5 group-open:-rotate-45',
+                    ].join(' ')}
+                  />
+                </span>
+                <span className='select-none'>Menu</span>
+              </span>
             </summary>
-            <div className='absolute right-0 mt-3 w-72 rounded-xl border border-border bg-background/95 p-3 shadow-xl'>
+
+            {/* Backdrop (click to close) */}
+            <div
+              onClick={closeMenu}
+              className={[
+                'fixed inset-0 z-40 bg-black/20 backdrop-blur-sm',
+                'opacity-0 pointer-events-none',
+                'transition-opacity duration-500 ease-[cubic-bezier(.22,1,.36,1)]',
+                'group-open:opacity-100 group-open:pointer-events-auto',
+              ].join(' ')}
+              aria-hidden='true'
+            />
+
+            {/* Popover panel */}
+            <div
+              className={[
+                'absolute right-0 z-50 mt-3 w-72 origin-top-right rounded-2xl border border-border',
+                'bg-background/95 p-3 shadow-xl outline-none',
+                // Smooth, slower motion
+                'opacity-0 translate-y-2 scale-95 pointer-events-none',
+                'transition-all duration-600 ease-[cubic-bezier(.22,1,.36,1)] will-change-[transform,opacity]',
+                'group-open:opacity-100 group-open:translate-y-0 group-open:scale-100 group-open:pointer-events-auto',
+              ].join(' ')}
+              // Close immediately on any click inside (before navigation)
+              onClickCapture={closeMenu}
+            >
               <ul className='space-y-1'>
                 {site.nav.map(({ label, href }) => {
                   const active =
@@ -86,7 +173,7 @@ export function Header() {
                       <Link
                         href={href}
                         className={[
-                          'block rounded-lg px-3 py-2 text-base',
+                          'block rounded-lg px-3 py-2 text-base transition-colors',
                           active
                             ? 'text-foreground bg-muted/40'
                             : 'text-foreground/85 hover:bg-muted/40 hover:text-foreground',
@@ -98,9 +185,20 @@ export function Header() {
                   );
                 })}
               </ul>
+
               <div className='mt-3 border-t border-border pt-3 flex items-center justify-between'>
                 <SocialLinks size={24} />
                 <ThemeToggle />
+              </div>
+
+              <div className='mt-2 flex justify-end'>
+                <button
+                  type='button'
+                  className='rounded-lg px-3 py-1 text-sm text-foreground/85 hover:text-foreground hover:bg-muted'
+                  onClick={closeMenu}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </details>
