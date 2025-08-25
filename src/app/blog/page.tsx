@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import Script from 'next/script';
 import { allPosts, Post } from 'contentlayer/generated';
 import { Shell } from '@/components/layout/Shell';
 
 interface PostWithMaybeSlugAsParams extends Post {
   slugAsParams?: string;
 }
-const slugOf = (p: Post): string =>
-  (p as PostWithMaybeSlugAsParams).slug ??
-  (p as PostWithMaybeSlugAsParams).slugAsParams ??
-  '';
+const postsAll: ReadonlyArray<PostWithMaybeSlugAsParams> =
+  allPosts as ReadonlyArray<PostWithMaybeSlugAsParams>;
+
+const slugOf = (p: PostWithMaybeSlugAsParams): string =>
+  p.slug ?? p.slugAsParams ?? '';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -18,14 +20,33 @@ export const metadata: Metadata = {
 };
 
 export default function BlogIndex() {
-  const posts = [...allPosts].sort((a, b) => {
+  const posts = [...postsAll].sort((a, b) => {
     const ad = new Date(a.date || 0).getTime();
     const bd = new Date(b.date || 0).getTime();
     return bd - ad;
   });
 
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://www.andrewteecephotography.com';
+
   return (
     <section className='py-14 md:py-20'>
+      {/* JSON-LD: ItemList for the blog index */}
+      <Script id='ld-itemlist' type='application/ld+json'>
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Andrew Teece — Blog',
+          numberOfItems: posts.length,
+          itemListElement: posts.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${base}/blog/${slugOf(p)}`,
+          })),
+        })}
+      </Script>
+
       <Shell size='tight'>
         <h1 className='font-serif text-3xl md:text-4xl tracking-tight text-foreground'>
           Blog
@@ -59,8 +80,9 @@ export default function BlogIndex() {
                           src={p.cover as string}
                           alt={p.title}
                           fill
-                          sizes='(min-width:1024px) 50vw, 100vw'
+                          sizes='(min-width:1280px) 50vw, (min-width:1024px) 50vw, 100vw'
                           className='object-cover'
+                          quality={80}
                         />
                       </div>
                     ) : (

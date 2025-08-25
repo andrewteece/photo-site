@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
     'https://www.andrewteecephotography.com';
   return {
     rules: { userAgent: '*', allow: '/' },
-    sitemap: `${base}/sitemap.xml`,
+    sitemap: [`${base}/sitemap.xml`, `${base}/sitemap-images.xml`],
   };
 }
