@@ -1,19 +1,25 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { allPosts } from 'contentlayer/generated';
+import { allPosts, Post } from 'contentlayer/generated';
 import { Mdx } from '@/components/mdx';
 import { PostPager } from '@/components/blog/PostPager';
 import { PostMeta } from '@/components/blog/PostMeta';
 import { readingTimeFromText } from '@/lib/readingTime';
 import { site } from '@/lib/site';
 
+/** Some Contentlayer setups expose either `slug` or `slugAsParams`. */
+interface PostWithMaybeSlugAsParams extends Post {
+  slugAsParams?: string;
+}
+const slugOf = (p: Post): string =>
+  (p as PostWithMaybeSlugAsParams).slug ??
+  (p as PostWithMaybeSlugAsParams).slugAsParams ??
+  '';
+
 export async function generateStaticParams() {
-  return allPosts.map((p) => ({
-    slug: (p as any).slug ?? (p as any).slugAsParams,
-  }));
+  return allPosts.map((p) => ({ slug: slugOf(p) }));
 }
 
-// ✅ Page-level metadata (no themeColor here)
 export async function generateMetadata({
   params,
 }: {
@@ -21,11 +27,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const post =
-    allPosts.find(
-      (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
-    ) ?? null;
-
+  const post = allPosts.find((p) => slugOf(p) === slug);
   if (!post) return {};
 
   const url = `/blog/${slug}`;
@@ -52,17 +54,6 @@ export async function generateMetadata({
   };
 }
 
-// ▶︎ OPTIONAL: If you want a page-specific theme color for the address bar,
-// move it to viewport (this is allowed at the page level).
-export function generateViewport(): Viewport {
-  return {
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-      { media: '(prefers-color-scheme: dark)', color: '#0b0b0c' },
-    ],
-  };
-}
-
 export default async function PostPage({
   params,
 }: {
@@ -70,25 +61,18 @@ export default async function PostPage({
 }) {
   const { slug } = await params;
 
-  const post =
-    allPosts.find(
-      (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
-    ) ?? null;
-
+  const post = allPosts.find((p) => slugOf(p) === slug);
   if (!post) return notFound();
 
   // Reading time
-  const source: string =
-    (post as any).body?.raw ?? (post as any).body?.code ?? '';
+  const source = post.body?.raw ?? post.body?.code ?? '';
   const { minutes } = readingTimeFromText(source);
 
   // Prev/next (newest -> oldest)
   const posts = [...allPosts].sort(
     (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
   );
-  const idx = posts.findIndex(
-    (p) => (p as any).slug === slug || (p as any).slugAsParams === slug
-  );
+  const idx = posts.findIndex((p) => slugOf(p) === slug);
   const prevPost = idx > 0 ? posts[idx - 1] : undefined;
   const nextPost =
     idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
@@ -106,24 +90,18 @@ export default async function PostPage({
       </header>
 
       <div className='prose prose-lg mt-8 max-w-none'>
-        <Mdx code={(post as any).body.code} />
+        <Mdx code={post.body.code} />
       </div>
 
       <PostPager
         prev={
           prevPost
-            ? {
-                title: prevPost.title,
-                slug: (prevPost as any).slug ?? (prevPost as any).slugAsParams,
-              }
+            ? { title: prevPost.title, slug: slugOf(prevPost) }
             : undefined
         }
         next={
           nextPost
-            ? {
-                title: nextPost.title,
-                slug: (nextPost as any).slug ?? (nextPost as any).slugAsParams,
-              }
+            ? { title: nextPost.title, slug: slugOf(nextPost) }
             : undefined
         }
       />

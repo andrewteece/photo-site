@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 import * as React from 'react';
 import { site } from '@/lib/site';
 import { si500px, siFlickr } from 'simple-icons';
@@ -77,7 +76,7 @@ export function SocialLinks({
   size?: number;
   gap?: string;
 }) {
-  const pad = 16; // bigger hit area (size + 16 ≈ 40px button)
+  const pad = 16;
   return (
     <ul className={`flex flex-wrap ${gap} ${className}`}>
       {site.socials.map(({ label, href }) => (

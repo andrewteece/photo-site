@@ -1,8 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { allPosts } from 'contentlayer/generated';
+import { allPosts, Post } from 'contentlayer/generated';
 import { Shell } from '@/components/layout/Shell';
+
+interface PostWithMaybeSlugAsParams extends Post {
+  slugAsParams?: string;
+}
+const slugOf = (p: Post): string =>
+  (p as PostWithMaybeSlugAsParams).slug ??
+  (p as PostWithMaybeSlugAsParams).slugAsParams ??
+  '';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -41,7 +49,7 @@ export default function BlogIndex() {
         ) : (
           <ul className='mt-8 grid gap-6 sm:grid-cols-2'>
             {posts.map((p) => {
-              const url = `/blog/${(p as any).slug ?? (p as any).slugAsParams}`;
+              const url = `/blog/${slugOf(p)}`;
               return (
                 <li key={p._id} className='card hover-lift overflow-hidden'>
                   <Link href={url} className='block'>
