@@ -3,9 +3,13 @@ import { allPosts, Post } from 'contentlayer/generated';
 
 interface PostMaybeSlug extends Post {
   slugAsParams?: string;
+  draft?: boolean | null;
 }
-const slugOf = (p: Post): string =>
-  (p as PostMaybeSlug).slug ?? (p as PostMaybeSlug).slugAsParams ?? '';
+
+const posts: ReadonlyArray<PostMaybeSlug> =
+  allPosts as ReadonlyArray<PostMaybeSlug>;
+
+const slugOf = (p: PostMaybeSlug): string => p.slug ?? p.slugAsParams ?? '';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base =
@@ -28,8 +32,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: p === '' ? 1 : 0.7,
   }));
 
-  const postEntries: MetadataRoute.Sitemap = [...allPosts]
-    .filter((p) => !(p as any).draft)
+  const postEntries: MetadataRoute.Sitemap = [...posts]
+    .filter((p) => !p.draft)
     .map((p) => ({
       url: `${base}/blog/${slugOf(p)}`,
       lastModified: p.date ? new Date(p.date) : now,

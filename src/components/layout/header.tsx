@@ -40,7 +40,6 @@ function NavItem({
 export function Header() {
   const pathname = usePathname();
 
-  // <details> controller for mobile
   const menuRef = useRef<HTMLDetailsElement | null>(null);
   const closeMenu = () => {
     if (menuRef.current && menuRef.current.open) menuRef.current.open = false;
@@ -49,7 +48,6 @@ export function Header() {
   // Close on route change
   useEffect(() => {
     closeMenu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Close on Escape
@@ -90,13 +88,11 @@ export function Header() {
 
         {/* Mobile */}
         <nav aria-label='Primary' className='md:hidden'>
-          {/* Hide the default ▼ marker on summary */}
           <details
             ref={menuRef}
             className='group relative [&>summary::-webkit-details-marker]:hidden'
           >
-            <summary aria-haspopup='menu' className='list-none'>
-              {/* Trigger button look */}
+            <summary className='list-none'>
               <span
                 className={[
                   'inline-flex items-center gap-2 rounded-xl border border-input',
@@ -106,7 +102,6 @@ export function Header() {
                   'hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 ].join(' ')}
               >
-                {/* Hamburger -> X */}
                 <span
                   aria-hidden
                   className='relative grid h-5 w-6 place-items-center'
@@ -137,7 +132,7 @@ export function Header() {
               </span>
             </summary>
 
-            {/* Backdrop (click to close) */}
+            {/* Backdrop */}
             <div
               onClick={closeMenu}
               className={[
@@ -149,17 +144,15 @@ export function Header() {
               aria-hidden='true'
             />
 
-            {/* Popover panel */}
+            {/* Panel */}
             <div
               className={[
                 'absolute right-0 z-50 mt-3 w-72 origin-top-right rounded-2xl border border-border',
                 'bg-background/95 p-3 shadow-xl outline-none',
-                // Smooth, slower motion
                 'opacity-0 translate-y-2 scale-95 pointer-events-none',
                 'transition-all duration-600 ease-[cubic-bezier(.22,1,.36,1)] will-change-[transform,opacity]',
                 'group-open:opacity-100 group-open:translate-y-0 group-open:scale-100 group-open:pointer-events-auto',
               ].join(' ')}
-              // Close immediately on any click inside (before navigation)
               onClickCapture={closeMenu}
             >
               <ul className='space-y-1'>
