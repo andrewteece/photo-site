@@ -1,17 +1,13 @@
 'use client';
 
+import { getCaptionFor } from '@/lib/captions';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { getCaptionFor } from '@/lib/captions';
 
 type Slide = { src: string };
 
-const heroSources: Slide[] = [
-  { src: '/images/portfolio/calm-morning.jpg' },
-  { src: '/images/portfolio/goldengate.jpg' },
-  { src: '/images/portfolio/morning-colors.jpg' },
-];
+const heroSources: Slide[] = [{ src: '/images/portfolio/morning-colors.jpg' }];
 
 export default function Hero() {
   const prefersReduced = useReducedMotion();
@@ -25,7 +21,7 @@ export default function Hero() {
     if (!canAnimate || hovered) return;
     const id = setInterval(
       () => setIndex((i) => (i + 1) % slides.length),
-      5500
+      5500,
     );
     return () => clearInterval(id);
   }, [canAnimate, hovered, slides.length]);
