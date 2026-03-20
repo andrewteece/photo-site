@@ -12,24 +12,15 @@ if (lifecycle === 'dev') {
   process.exit(0);
 }
 
-// Node 22+ has a CLI exitCode quirk. Skip explicit run; Next will generate during build.
-if (major >= 22) {
-  console.log(
-    'ℹ️  Skipping explicit Contentlayer build on Node 22+ (handled by Next.js).'
-  );
-  process.exit(0);
-}
-
-// Node 20–21: run a one-off build
+// For production builds, always run contentlayer explicitly to avoid race conditions
 if (major >= 20) {
   try {
     console.log('ℹ️  Running: contentlayer build');
     execSync('contentlayer build', { stdio: 'inherit' });
     console.log('✅ Contentlayer build complete.');
-  } catch {
-    console.warn(
-      '⚠️  Contentlayer build failed; continuing (Next.js may still regenerate).'
-    );
+  } catch (err) {
+    console.error('❌ Contentlayer build failed:', err.message);
+    process.exit(1); // Fail the build if contentlayer fails
   }
 } else {
   console.warn(`⚠️  Node ${version} detected (<20). Skipping Contentlayer.`);
