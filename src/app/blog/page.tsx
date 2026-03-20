@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import Script from 'next/script';
-import { allPosts, Post } from 'contentlayer/generated';
 import { Shell } from '@/components/layout/Shell';
+import { allPosts, Post } from 'contentlayer/generated';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import Script from 'next/script';
 
 interface PostWithMaybeSlugAsParams extends Post {
   slugAsParams?: string;
@@ -17,6 +17,17 @@ const slugOf = (p: PostWithMaybeSlugAsParams): string =>
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Notes on light, process, and recent work.',
+  alternates: {
+    canonical: '/blog',
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
+  openGraph: {
+    title: 'Blog — Andrew Teece Photography',
+    description: 'Notes on light, process, and recent work.',
+    url: '/blog',
+  },
 };
 
 export default function BlogIndex() {

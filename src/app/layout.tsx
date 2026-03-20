@@ -1,3 +1,4 @@
+import { Analytics } from '@/components/Analytics';
 import Footer from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import { ThemeScript } from '@/components/theme/ThemeScript';
@@ -32,6 +33,18 @@ export const metadata: Metadata = {
   },
   description:
     'Visual artist working in the medium of photography, exploring light, geometry, and contemplation.',
+  authors: [{ name: 'Andrew Teece', url: baseUrl }],
+  creator: 'Andrew Teece',
+  publisher: 'Andrew Teece',
+  keywords: [
+    'photography',
+    'fine art photography',
+    'landscape photography',
+    'portrait photography',
+    'visual artist',
+    'photographer',
+    'Andrew Teece',
+  ],
   icons: {
     icon: [
       {
@@ -105,7 +118,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
 
-        {/* JSON-LD: Person */}
+        {/* JSON-LD: Professional Photographer */}
         <Script
           id='ld-person'
           type='application/ld+json'
@@ -113,11 +126,32 @@ export default function RootLayout({
         >
           {JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'Person',
+            '@type': ['Person', 'PhotographAction'],
             name: 'Andrew Teece',
-            jobTitle: 'Photographer',
+            jobTitle: 'Professional Photographer',
+            description:
+              'Visual artist specializing in fine art photography, landscape photography, and portrait photography.',
             url: baseUrl,
-            brand: { '@type': 'Brand', name: site.brand },
+            image: `${baseUrl}/opengraph-image`,
+            sameAs: [
+              site.social.instagram,
+              site.social.flickr,
+              site.social['500px'],
+            ].filter(Boolean),
+            email: site.email,
+            knowsAbout: [
+              'Photography',
+              'Fine Art',
+              'Landscape Photography',
+              'Portrait Photography',
+              'Visual Arts',
+            ],
+            hasOccupation: {
+              '@type': 'Occupation',
+              name: 'Photographer',
+              occupationalCategory: 'Photographers',
+              educationRequirements: 'Professional Training',
+            },
           })}
         </Script>
 
@@ -145,6 +179,7 @@ export default function RootLayout({
         className='min-h-dvh flex flex-col font-sans'
         suppressHydrationWarning
       >
+        <Analytics />
         <WebVitals />
         <Header />
         <main className='flex-1'>{children}</main>

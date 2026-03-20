@@ -1,5 +1,6 @@
 'use client';
 
+import { reportWebVitals } from '@/lib/analytics';
 import { useReportWebVitals } from 'next/web-vitals';
 
 type Metric = {
@@ -21,12 +22,11 @@ export function WebVitals() {
     }
 
     // Send to analytics in production
-    // Examples:
-    // - Google Analytics: gtag('event', metric.name, { value: metric.value })
-    // - Vercel Analytics: analytics.track(metric.name, { value: metric.value })
-    // - Custom endpoint: fetch('/api/vitals', { method: 'POST', body: JSON.stringify(metric) })
+    if (process.env.NODE_ENV === 'production') {
+      reportWebVitals(metric);
+    }
 
-    // For now, just log key metrics
+    // Warn about poor metrics
     if (metric.rating === 'poor') {
       console.warn(
         `[Performance] ${metric.name} is ${metric.rating}:`,

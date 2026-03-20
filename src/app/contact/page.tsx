@@ -1,11 +1,19 @@
-import type { Metadata } from 'next';
 import { Shell } from '@/components/layout/Shell';
 import ContactForm from '@/components/sections/ContactForm';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact',
   description:
     'Get in touch with Andrew Teece for assignments, licensing, or print inquiries.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact — Andrew Teece Photography',
+    description: 'Get in touch for assignments, licensing, or print inquiries.',
+    url: '/contact',
+  },
 };
 
 export default function ContactPage() {

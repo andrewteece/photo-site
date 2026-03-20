@@ -6,6 +6,15 @@ export const metadata: Metadata = {
   title: 'About',
   description:
     'About Andrew Teece — visual artist working in the medium of photography, exploring the intersection of light, geometry, and contemplation.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About — Andrew Teece Photography',
+    description:
+      'Learn about Andrew Teece, a visual artist specializing in fine art photography.',
+    url: '/about',
+  },
 };
 
 export default function AboutPage() {

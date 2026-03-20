@@ -16,10 +16,14 @@ export const metadata: Metadata = {
   title: 'Portfolio',
   description:
     'Visual works exploring light, form, and contemplation through the medium of photography.',
+  alternates: {
+    canonical: '/portfolio',
+  },
   openGraph: {
     title: 'Portfolio — Andrew Teece Photography',
     description:
       'Visual works exploring light, form, and contemplation through the medium of photography.',
+    url: '/portfolio',
     images: [
       {
         url: photos[0]?.src || '/images/portfolio/calm-morning.jpg',
