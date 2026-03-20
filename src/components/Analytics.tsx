@@ -1,19 +1,17 @@
 'use client';
 
 import { GA_MEASUREMENT_ID, pageview } from '@/lib/analytics';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { useEffect } from 'react';
 
 export function Analytics() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!GA_MEASUREMENT_ID) return;
-    const url = pathname + (searchParams?.toString() ? `?${searchParams}` : '');
-    pageview(url);
-  }, [pathname, searchParams]);
+    pageview(pathname);
+  }, [pathname]);
 
   // Don't render in development or if no GA ID
   if (process.env.NODE_ENV !== 'production' || !GA_MEASUREMENT_ID) {

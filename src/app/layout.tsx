@@ -133,11 +133,7 @@ export default function RootLayout({
               'Visual artist specializing in fine art photography, landscape photography, and portrait photography.',
             url: baseUrl,
             image: `${baseUrl}/opengraph-image`,
-            sameAs: [
-              site.social.instagram,
-              site.social.flickr,
-              site.social['500px'],
-            ].filter(Boolean),
+            sameAs: site.socials.map((s) => s.href),
             email: site.email,
             knowsAbout: [
               'Photography',

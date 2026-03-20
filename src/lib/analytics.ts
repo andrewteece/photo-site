@@ -1,9 +1,12 @@
 // Analytics utilities for Google Analytics 4 and other providers
 
+type GtagCommand = 'config' | 'event' | 'js' | 'set';
+type GtagParams = Record<string, string | number | boolean | null | undefined>;
+
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
+    gtag?: (command: GtagCommand, ...args: (string | GtagParams)[]) => void;
+    dataLayer?: unknown[];
   }
 }
 
