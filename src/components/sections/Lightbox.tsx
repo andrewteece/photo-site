@@ -49,12 +49,42 @@ export default function Lightbox({
   const [showHelp, setShowHelp] = useState(false);
   const [copied, setCopied] = useState(false);
   const [url, setUrl] = useState('');
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Minimum swipe distance (in px) to trigger navigation
+  const minSwipeDistance = 50;
 
   useEffect(() => {
     if (open && typeof window !== 'undefined') {
       setUrl(window.location.origin + '/portfolio');
     }
   }, [open]);
+
+  // Touch gesture handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd || !hasItems) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      onChange(mod(safeIndex + 1, items.length));
+    }
+    if (isRightSwipe) {
+      onChange(mod(safeIndex - 1, items.length));
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -102,6 +132,27 @@ export default function Lightbox({
     );
   };
 
+  const downloadImage = async () => {
+    if (!current) return;
+    try {
+      const response = await fetch(current.src);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      const filename = current.caption?.title
+        ? `${current.caption.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.jpg`
+        : current.src.split('/').pop() || 'photo.jpg';
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+
   if (!open || !hasItems || !current) return null;
 
   const caption = current.caption;
@@ -120,12 +171,52 @@ export default function Lightbox({
       aria-modal='true'
       aria-label='Image lightbox'
       onClick={onClose}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {/* Preload adjacent images (hidden) */}
       {prevItem && <link rel='preload' as='image' href={prevItem.src} />}
       {nextItem && <link rel='preload' as='image' href={nextItem.src} />}
-      {/* Top bar: Close, Share, Help */}
+
+      {/* Image counter */}
+      {items.length > 1 && (
+        <div className='absolute top-4 left-1/2 -translate-x-1/2 z-10'>
+          <div className='rounded-full bg-black/60 backdrop-blur px-4 py-2 text-white text-sm font-medium'>
+            {safeIndex + 1} / {items.length}
+          </div>
+        </div>
+      )}
+
+      {/* Top bar: Download, Help, Share, Close */}
       <div className='absolute right-4 top-4 flex items-center gap-2 z-10'>
+        {/* Download button */}
+        <button
+          type='button'
+          onClick={(e) => {
+            e.stopPropagation();
+            downloadImage();
+          }}
+          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none transition-colors'
+          aria-label='Download image'
+          title='Download image'
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={2}
+            stroke='currentColor'
+            className='w-5 h-5'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3'
+            />
+          </svg>
+        </button>
+
         {/* Help button */}
         <button
           type='button'
@@ -133,7 +224,7 @@ export default function Lightbox({
             e.stopPropagation();
             setShowHelp((prev) => !prev);
           }}
-          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none'
+          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none transition-colors'
           aria-label='Keyboard shortcuts'
           title='Keyboard shortcuts'
         >
@@ -147,7 +238,7 @@ export default function Lightbox({
             e.stopPropagation();
             copyLink();
           }}
-          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none'
+          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none transition-colors'
           aria-label={copied ? 'Copied!' : 'Copy link'}
           title={copied ? 'Copied!' : 'Copy link'}
         >
@@ -161,7 +252,7 @@ export default function Lightbox({
             e.stopPropagation();
             shareOnPinterest();
           }}
-          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none'
+          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none transition-colors'
           aria-label='Share on Pinterest'
           title='Share on Pinterest'
         >
@@ -172,7 +263,7 @@ export default function Lightbox({
         <button
           type='button'
           onClick={onClose}
-          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none'
+          className='rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20 focus:outline-none transition-colors'
           aria-label='Close'
         >
           ✕

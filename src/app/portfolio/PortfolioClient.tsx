@@ -2,6 +2,7 @@
 
 import { GalleryFilters } from '@/components/sections/GalleryFilters';
 import Lightbox from '@/components/sections/Lightbox';
+import { BackToTop } from '@/components/ui/BackToTop';
 import { getCaptionFor } from '@/lib/captions';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
@@ -19,20 +20,32 @@ export function PortfolioClient({ photos }: { photos: ManifestItem[] }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
-  // Extract unique categories and tags from all photos
-  const { categories, allTags } = useMemo(() => {
+  // Extract unique categories and tags from all photos with counts
+  const { categories, allTags, categoryCounts, tagCounts } = useMemo(() => {
     const cats = new Set<string>();
     const tags = new Set<string>();
+    const catCounts: Record<string, number> = {};
+    const tagCountsMap: Record<string, number> = {};
 
     photos.forEach((p) => {
       const meta = getCaptionFor(p.src);
-      if (meta.category) cats.add(meta.category);
-      if (meta.tags) meta.tags.forEach((t) => tags.add(t));
+      if (meta.category) {
+        cats.add(meta.category);
+        catCounts[meta.category] = (catCounts[meta.category] || 0) + 1;
+      }
+      if (meta.tags) {
+        meta.tags.forEach((t) => {
+          tags.add(t);
+          tagCountsMap[t] = (tagCountsMap[t] || 0) + 1;
+        });
+      }
     });
 
     return {
       categories: Array.from(cats).sort(),
       allTags: Array.from(tags).sort(),
+      categoryCounts: catCounts,
+      tagCounts: tagCountsMap,
     };
   }, [photos]);
 
@@ -93,6 +106,8 @@ export function PortfolioClient({ photos }: { photos: ManifestItem[] }) {
           onClearAll={handleClearAll}
           resultCount={filteredPhotos.length}
           totalCount={photos.length}
+          categoryCounts={categoryCounts}
+          tagCounts={tagCounts}
         />
 
         {/* Grid title (demoted to H2). Make it sr-only if you don't want a second visible heading */}
@@ -105,6 +120,7 @@ export function PortfolioClient({ photos }: { photos: ManifestItem[] }) {
             const originalIdx = photos.findIndex(
               (photo) => photo.src === p.src,
             );
+
             return (
               <button
                 key={p.src}
@@ -112,34 +128,54 @@ export function PortfolioClient({ photos }: { photos: ManifestItem[] }) {
                   setIdx(originalIdx);
                   setOpen(true);
                 }}
-                className='group block overflow-hidden rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black/30'
+                className='group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-foreground/30'
                 aria-label={`Open image: ${meta.title || meta.alt}`}
               >
-                <Image
-                  src={p.src}
-                  alt={meta.alt}
-                  width={p.width}
-                  height={p.height}
-                  placeholder='blur'
-                  blurDataURL={p.blurDataURL}
-                  sizes='(min-width: 1024px) 33vw, (min-width: 640px) 48vw, 94vw'
-                  quality={85}
-                  className='object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.01]'
-                />
-                {/* Optional visible caption under each image.
-                    Remove this block if you prefer a cleaner grid. */}
-                {meta.title && (
-                  <figcaption className='text-sm text-muted-foreground px-2 py-2 text-left'>
-                    {meta.title}
-                    {meta.location ? ` — ${meta.location}` : ''}
-                    {meta.year ? `, ${meta.year}` : ''}
-                  </figcaption>
-                )}
+                <div
+                  className='relative'
+                  style={{ aspectRatio: `${p.width}/${p.height}` }}
+                >
+                  <Image
+                    src={p.src}
+                    alt={meta.alt}
+                    width={p.width}
+                    height={p.height}
+                    placeholder='blur'
+                    blurDataURL={p.blurDataURL}
+                    sizes='(min-width: 1024px) 33vw, (min-width: 640px) 48vw, 94vw'
+                    quality={85}
+                    className='object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.05]'
+                  />
+                  {/* Hover overlay with view icon */}
+                  <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
+                    <div className='text-white text-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300'>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='w-12 h-12 mx-auto mb-2'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6'
+                        />
+                      </svg>
+                      <span className='text-sm font-medium'>
+                        View Full Size
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </button>
             );
           })}
         </div>
       </section>
+
+      <BackToTop />
 
       <Lightbox
         items={photos.map((p) => ({

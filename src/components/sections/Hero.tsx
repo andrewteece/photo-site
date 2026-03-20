@@ -1,5 +1,6 @@
 'use client';
 
+import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { getCaptionFor } from '@/lib/captions';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
@@ -60,8 +61,8 @@ export default function Hero() {
     <section
       className={[
         'group/hero relative overflow-hidden',
-        'h-[45vh] md:h-[58vh] lg:h-[64vh] xl:h-[68vh]',
-        'min-h-[320px] max-h-[760px]',
+        'h-[40vh] sm:h-[45vh] md:h-[58vh] lg:h-[64vh] xl:h-[68vh]',
+        'min-h-[280px] max-h-[760px]',
       ].join(' ')}
       aria-label='Featured work'
       onMouseEnter={() => setHovered(true)}
@@ -88,6 +89,9 @@ export default function Hero() {
           <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent' />
         </div>
       )}
+
+      {/* Scroll Indicator */}
+      <ScrollIndicator />
 
       {/* Caption */}
       <div className='relative z-10 mx-auto max-w-6xl px-6 h-full flex items-end pb-8 md:pb-10'>
