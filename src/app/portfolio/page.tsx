@@ -1,10 +1,7 @@
-'use client';
-
-import Image from 'next/image';
-import { useState } from 'react';
-import manifest from '@/lib/image-manifest.json';
 import { getCaptionFor } from '@/lib/captions';
-import Lightbox from '@/components/sections/Lightbox';
+import manifest from '@/lib/image-manifest.json';
+import type { Metadata } from 'next';
+import { PortfolioClient } from './PortfolioClient';
 
 type ManifestItem = {
   src: string;
@@ -13,75 +10,73 @@ type ManifestItem = {
   blurDataURL: string;
 };
 
-export default function PortfolioPage() {
-  const [open, setOpen] = useState(false);
-  const [idx, setIdx] = useState(0);
+const photos = manifest as ManifestItem[];
 
-  const photos = manifest as ManifestItem[];
+export const metadata: Metadata = {
+  title: 'Portfolio',
+  description:
+    'Visual works exploring light, form, and contemplation through the medium of photography.',
+  openGraph: {
+    title: 'Portfolio — Andrew Teece Photography',
+    description:
+      'Visual works exploring light, form, and contemplation through the medium of photography.',
+    images: [
+      {
+        url: photos[0]?.src || '/images/portfolio/calm-morning.jpg',
+        width: photos[0]?.width || 1200,
+        height: photos[0]?.height || 630,
+        alt: 'Photography portfolio preview',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Portfolio — Andrew Teece Photography',
+    description:
+      'Visual works exploring light, form, and contemplation through the medium of photography.',
+    images: [photos[0]?.src || '/images/portfolio/calm-morning.jpg'],
+  },
+};
+
+export default function PortfolioPage() {
+  // Build JSON-LD structured data for ImageGallery
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://www.andrewteecephotography.com';
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: 'Andrew Teece Photography Portfolio',
+    description:
+      'Visual works by Andrew Teece exploring light, form, and contemplation through photography',
+    url: `${baseUrl}/portfolio`,
+    image: photos.slice(0, 5).map((p) => {
+      const caption = getCaptionFor(p.src);
+      return {
+        '@type': 'ImageObject',
+        contentUrl: `${baseUrl}${p.src}`,
+        name: caption.title || caption.alt,
+        description: caption.alt,
+        width: p.width,
+        height: p.height,
+        ...(caption.location && { contentLocation: caption.location }),
+        ...(caption.camera && { exifData: caption.camera }),
+        ...(caption.category && { genre: caption.category }),
+        ...(caption.tags &&
+          caption.tags.length > 0 && { keywords: caption.tags.join(', ') }),
+      };
+    }),
+    numberOfItems: photos.length,
+  };
 
   return (
     <>
-      <section className='container mx-auto px-6 md:px-8 py-10 md:py-14'>
-        {/* Visible H1 for SEO/a11y */}
-        <header className='mb-8'>
-          <h1 className='font-serif text-3xl md:text-4xl tracking-tight'>
-            Portfolio
-          </h1>
-          <p className='text-muted-foreground mt-2'>
-            Selected photographs. Click any image to view larger. Use ← → keys
-            to navigate.
-          </p>
-        </header>
-
-        {/* Grid title (demoted to H2). Make it sr-only if you don't want a second visible heading */}
-        <h2 className='sr-only'>Gallery</h2>
-
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {photos.map((p, i) => {
-            const meta = getCaptionFor(p.src);
-            return (
-              <button
-                key={p.src}
-                onClick={() => {
-                  setIdx(i);
-                  setOpen(true);
-                }}
-                className='group block overflow-hidden rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black/30'
-                aria-label={`Open image: ${meta.title || meta.alt}`}
-              >
-                <Image
-                  src={p.src}
-                  alt={meta.alt}
-                  width={p.width}
-                  height={p.height}
-                  placeholder='blur'
-                  blurDataURL={p.blurDataURL}
-                  sizes='(min-width: 1024px) 33vw, (min-width: 640px) 48vw, 94vw'
-                  quality={85}
-                  className='object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.01]'
-                />
-                {/* Optional visible caption under each image.
-                    Remove this block if you prefer a cleaner grid. */}
-                {meta.title && (
-                  <figcaption className='text-sm text-muted-foreground px-2 py-2 text-left'>
-                    {meta.title}
-                    {meta.location ? ` — ${meta.location}` : ''}
-                    {meta.year ? `, ${meta.year}` : ''}
-                  </figcaption>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <Lightbox
-        items={photos}
-        index={idx}
-        onChange={(next) => setIdx(next)}
-        onClose={() => setOpen(false)}
-        open={open}
+      {/* JSON-LD structured data */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <PortfolioClient photos={photos} />
     </>
   );
 }

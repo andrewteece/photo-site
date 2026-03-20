@@ -1,7 +1,7 @@
-import VisuallyHidden from '@/components/ui/VisuallyHidden';
 import { Shell } from '@/components/layout/Shell';
-import Hero from '@/components/sections/Hero';
 import GalleryGrid from '@/components/sections/GalleryGrid';
+import Hero from '@/components/sections/Hero';
+import VisuallyHidden from '@/components/ui/VisuallyHidden';
 
 export default function HomePage() {
   return (
@@ -15,12 +15,12 @@ export default function HomePage() {
       <section className='section'>
         <Shell size='tight'>
           <h2 className='font-serif text-2xl md:text-3xl tracking-tight'>
-            Honest images, considered process.
+            Deliberate compositions, patient light.
           </h2>
           <p className='mt-4 text-muted-foreground max-w-prose'>
-            I work with natural light when possible and keep direction gentle.
-            The goal is simple—make photographs that feel like the day, not a
-            photoshoot.
+            Working primarily with natural light, I explore the dialogue between
+            form and atmosphere. Each image is an investigation of space,
+            texture, and the quiet moments that reveal themselves when we pause.
           </p>
         </Shell>
       </section>

@@ -14,10 +14,11 @@ export function LogoWordmark({
         <div
           className='font-serif'
           style={{
-            fontWeight: 600,
-            fontSize: '18px',
-            letterSpacing: '-0.02em',
-            lineHeight: 1.1,
+            fontWeight: 500,
+            fontSize: '16px',
+            letterSpacing: '0.15em',
+            lineHeight: 1.2,
+            textTransform: 'uppercase',
           }}
         >
           Andrew Teece
@@ -25,12 +26,12 @@ export function LogoWordmark({
         <div
           className='text-muted-foreground'
           style={{
-            fontSize: '10px',
-            letterSpacing: '0.34em',
+            fontSize: '9px',
+            letterSpacing: '0.4em',
             textTransform: 'uppercase',
           }}
         >
-          Photography
+          Visual Artist
         </div>
       </div>
     </div>

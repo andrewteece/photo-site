@@ -1,7 +1,8 @@
 // Serve an image sitemap at /sitemap-images.xml
-import path from 'node:path';
-import { promises as fs } from 'node:fs';
+import { getCaptionFor } from '@/lib/captions';
 import { allPosts, Post } from 'contentlayer/generated';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 
 export const runtime = 'nodejs';
 
@@ -32,7 +33,18 @@ export async function GET() {
   } catch {
     files = [];
   }
-  const portfolioImageUrls = files.map((f) => `${base}/images/portfolio/${f}`);
+
+  // Build enhanced portfolio image entries with captions
+  const portfolioImages = files.map((f) => {
+    const caption = getCaptionFor(f);
+    return {
+      loc: `${base}/images/portfolio/${f}`,
+      title: caption.title || caption.alt,
+      caption: caption.alt,
+      geo_location: caption.location,
+      license: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+    };
+  });
 
   // 2) Blog post covers (only if cover is a *string*)
   const postCoverEntries = posts
@@ -54,8 +66,23 @@ export async function GET() {
   const portfolioUrlBlock = `<url>
   <loc>${base}/portfolio</loc>
   <lastmod>${nowISO}</lastmod>
-  ${portfolioImageUrls
-    .map((loc) => `<image:image><image:loc>${loc}</image:loc></image:image>`)
+  ${portfolioImages
+    .map((img) => {
+      const parts = [
+        `<image:image>`,
+        `<image:loc>${escapeXml(img.loc)}</image:loc>`,
+        `<image:title>${escapeXml(img.title)}</image:title>`,
+        `<image:caption>${escapeXml(img.caption)}</image:caption>`,
+      ];
+      if (img.geo_location) {
+        parts.push(
+          `<image:geo_location>${escapeXml(img.geo_location)}</image:geo_location>`,
+        );
+      }
+      parts.push(`<image:license>${escapeXml(img.license)}</image:license>`);
+      parts.push(`</image:image>`);
+      return parts.join('\n    ');
+    })
     .join('\n  ')}
 </url>`;
 
@@ -68,7 +95,7 @@ export async function GET() {
     <image:loc>${e.image}</image:loc>
     <image:title>${escapeXml(e.title)}</image:title>
   </image:image>
-</url>`
+</url>`,
     )
     .join('\n');
 

@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
-import { site } from '@/lib/site';
 import { SocialLinks } from '@/components/ui/SocialIcons';
+import { site } from '@/lib/site';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Andrew Teece — photographer specializing in fine art landscapes and portrait commissions.',
+    'About Andrew Teece — visual artist working in the medium of photography, exploring the intersection of light, geometry, and contemplation.',
 };
 
 export default function AboutPage() {
@@ -17,9 +17,10 @@ export default function AboutPage() {
         </h1>
 
         <p className='mt-5 text-foreground/80'>
-          I’m Andrew Teece, a photographer focused on fine art landscapes and
-          thoughtful portrait commissions. My work leans into quiet light, clean
-          geometry, and a sense of stillness.
+          I&apos;m Andrew Teece, a visual artist working in the medium of
+          photography. My practice explores the intersection of light, geometry,
+          and contemplation— seeking moments of stillness within the natural and
+          built environment.
         </p>
 
         <p className='mt-4 text-foreground/80'>

@@ -1,11 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
-import { site } from '@/lib/site';
-import { SocialLinks } from '@/components/ui/SocialIcons';
+import { LogoWordmark } from '@/components/brand/LogoWordmark';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { SocialLinks } from '@/components/ui/SocialIcons';
+import { site } from '@/lib/site';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
 function NavItem({
   href,
@@ -60,11 +61,8 @@ export function Header() {
   return (
     <header className='sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
       <div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8'>
-        <Link
-          href='/'
-          className='font-serif text-xl tracking-tight hover:opacity-90 text-foreground'
-        >
-          {site.brand}
+        <Link href='/' className='hover:opacity-90'>
+          <LogoWordmark markSize={28} />
         </Link>
 
         {/* Desktop */}

@@ -3,7 +3,7 @@ import readingTime from 'reading-time';
 
 export const Post = defineDocumentType(() => ({
   name: 'Post',
-  filePathPattern: `**/*.mdx`,
+  filePathPattern: `blog/**/*.mdx`,
   contentType: 'mdx',
   contentDirPath: 'content/blog',
   fields: {
@@ -30,7 +30,36 @@ export const Post = defineDocumentType(() => ({
   },
 }));
 
+export const Gallery = defineDocumentType(() => ({
+  name: 'Gallery',
+  filePathPattern: `galleries/**/*.mdx`,
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string', required: true },
+    description: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    category: { type: 'string' },
+    location: { type: 'string' },
+    client: { type: 'string' },
+    cover: { type: 'string' },
+    images: { type: 'list', of: { type: 'string' } },
+    featured: { type: 'boolean', default: false },
+  },
+  computedFields: {
+    slug: {
+      type: 'string',
+      resolve: (gallery) =>
+        gallery._raw.flattenedPath.replace(/^galleries\//, ''),
+    },
+    url: {
+      type: 'string',
+      resolve: (gallery) =>
+        `/portfolio/${gallery._raw.flattenedPath.replace(/^galleries\//, '')}`,
+    },
+  },
+}));
+
 export default makeSource({
   contentDirPath: 'content',
-  documentTypes: [Post],
+  documentTypes: [Post, Gallery],
 });

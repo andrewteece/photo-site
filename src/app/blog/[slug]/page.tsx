@@ -1,12 +1,15 @@
-import type { Metadata } from 'next';
-import Script from 'next/script';
-import { notFound } from 'next/navigation';
-import { allPosts, Post } from 'contentlayer/generated';
-import { Mdx } from '@/components/mdx';
-import { PostPager } from '@/components/blog/PostPager';
 import { PostMeta } from '@/components/blog/PostMeta';
+import { PostPager } from '@/components/blog/PostPager';
+import { Mdx } from '@/components/mdx';
 import { readingTimeFromText } from '@/lib/readingTime';
 import { site } from '@/lib/site';
+import { allPosts, Post } from 'contentlayer/generated';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Script from 'next/script';
+
+// Force dynamic rendering to avoid React 19 prerender issues with MDX
+export const dynamic = 'force-dynamic';
 
 interface PostMaybeSlug extends Post {
   slugAsParams?: string;
@@ -71,7 +74,7 @@ export default async function PostPage({
 
   // Sort for prev/next (newest -> oldest)
   const posts = [...allPosts].sort(
-    (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+    (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime(),
   );
   const idx = posts.findIndex((p) => slugOf(p) === slug);
   const prevPost = idx > 0 ? posts[idx - 1] : undefined;

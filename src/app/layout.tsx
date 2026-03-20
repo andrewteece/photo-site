@@ -1,11 +1,12 @@
-import './globals.css';
-import type { Metadata, Viewport } from 'next';
-import { Header } from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import { Inter, Fraunces } from 'next/font/google';
+import { Header } from '@/components/layout/header';
 import { ThemeScript } from '@/components/theme/ThemeScript';
-import Script from 'next/script';
+import { WebVitals } from '@/components/WebVitals';
 import { site } from '@/lib/site';
+import type { Metadata, Viewport } from 'next';
+import { Fraunces, Inter } from 'next/font/google';
+import Script from 'next/script';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-serif' });
@@ -29,7 +30,8 @@ export const metadata: Metadata = {
     default: `${site.brand}`,
     template: `%s — ${site.brand}`,
   },
-  description: 'Fine art landscapes and portrait commissions.',
+  description:
+    'Visual artist working in the medium of photography, exploring light, geometry, and contemplation.',
   icons: {
     icon: [
       {
@@ -70,13 +72,15 @@ export const metadata: Metadata = {
     url: baseUrl,
     siteName: site.brand,
     title: site.brand,
-    description: 'Fine art landscapes and portrait commissions.',
+    description:
+      'Visual artist working in the medium of photography, exploring light, geometry, and contemplation.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
     title: site.brand,
-    description: 'Fine art landscapes and portrait commissions.',
+    description:
+      'Visual artist working in the medium of photography, exploring light, geometry, and contemplation.',
     images: ['/opengraph-image'],
   },
   alternates: {
@@ -137,7 +141,11 @@ export default function RootLayout({
         </Script>
       </head>
 
-      <body className='min-h-dvh flex flex-col font-sans'>
+      <body
+        className='min-h-dvh flex flex-col font-sans'
+        suppressHydrationWarning
+      >
+        <WebVitals />
         <Header />
         <main className='flex-1'>{children}</main>
         <Footer />

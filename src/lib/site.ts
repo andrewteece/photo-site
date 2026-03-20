@@ -14,10 +14,14 @@ export const site = {
   email: 'andrewteece@gmail.com',
 
   socials: [
+    {
+      label: 'Instagram',
+      href: 'https://www.instagram.com/andrewteecephotography/',
+    },
     { label: '500px', href: 'https://500px.com/p/AndrewTeece?view=photos' },
     { label: 'Flickr', href: 'https://www.flickr.com/photos/andrewteece/' },
     { label: 'Website', href: 'https://www.andrewteece.com/' },
   ],
 
-  footerNote: 'Fine art landscapes and portrait commissions.',
+  footerNote: 'Photographic works exploring light, form, and stillness.',
 };

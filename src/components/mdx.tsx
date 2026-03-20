@@ -1,7 +1,9 @@
+'use client';
+
+import Photo from '@/components/Photo';
 import { useMDXComponent } from 'next-contentlayer/hooks';
 import Link from 'next/link';
 import type { AnchorHTMLAttributes } from 'react';
-import Photo from '@/components/Photo';
 
 type AProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href?: string };
 

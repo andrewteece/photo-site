@@ -1,6 +1,7 @@
-import Link from 'next/link';
-import { site } from '@/lib/site';
+import { LogoWordmark } from '@/components/brand/LogoWordmark';
 import { SocialLinks } from '@/components/ui/SocialIcons';
+import { site } from '@/lib/site';
+import Link from 'next/link';
 
 export const Footer = () => {
   const year = new Date().getFullYear();
@@ -12,9 +13,7 @@ export const Footer = () => {
         <div className='grid gap-10 py-12 md:grid-cols-3'>
           {/* Brand / note / email */}
           <div>
-            <div className='font-serif text-xl text-foreground'>
-              {site.brand}
-            </div>
+            <LogoWordmark markSize={32} />
 
             {site.footerNote && (
               <p className='mt-2 text-base text-muted-foreground'>

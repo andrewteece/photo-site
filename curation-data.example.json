@@ -1,0 +1,85 @@
+{
+  "scannedAt": "2026-03-20T12:00:00.000Z",
+  "totalPhotos": 3,
+  "photos": [
+    {
+      "filename": "example-photo-1.jpg",
+      "originalPath": "/path/to/staging/500px/example-photo-1.jpg",
+      "hash": "a1b2c3d4e5f6g7h8",
+      "width": 4000,
+      "height": 2667,
+      "format": "jpeg",
+      "size": 8529407,
+      "exif": {
+        "make": "Sony",
+        "model": "ILCE-7RM3",
+        "lens": "FE 16-35mm F2.8 GM",
+        "focalLength": 24,
+        "aperture": 8,
+        "shutterSpeed": "1/125",
+        "iso": 400,
+        "dateTime": "2024:08:15 06:23:45"
+      },
+      "suggested": {
+        "newFilename": "landscape-5px-01.jpg",
+        "source": "500px",
+        "url": "https://500px.com/photo/YOUR_PHOTO_ID_HERE",
+        "caption": "Ancient canyon walls illuminated by the warm glow of sunrise",
+        "category": "Landscapes",
+        "tags": ["canyon", "sunrise", "desert", "golden-hour"],
+        "location": "Zion National Park, Utah"
+      }
+    },
+    {
+      "filename": "example-photo-2.jpg",
+      "originalPath": "/path/to/staging/flickr/example-photo-2.jpg",
+      "hash": "i9j8k7l6m5n4o3p2",
+      "width": 3840,
+      "height": 2560,
+      "format": "jpeg",
+      "size": 7234891,
+      "exif": {
+        "make": "Canon",
+        "model": "EOS 5D Mark III",
+        "lens": "EF 70-200mm f/2.8L IS II USM",
+        "focalLength": 135,
+        "aperture": 5.6,
+        "shutterSpeed": "1/250",
+        "iso": 320,
+        "dateTime": "2024:06:10 14:15:22"
+      },
+      "suggested": {
+        "newFilename": "nature-flkr-01.jpg",
+        "source": "flickr",
+        "url": "https://www.flickr.com/photos/andrewteece/YOUR_PHOTO_ID",
+        "caption": "Morning dew on spider silk caught in soft dawn light",
+        "category": "Nature",
+        "tags": ["macro", "dew", "morning", "spider-web"],
+        "location": "Upper Midwest"
+      }
+    },
+    {
+      "filename": "example-photo-3.jpg",
+      "originalPath": "/path/to/staging/500px/example-photo-3.jpg",
+      "hash": "q1r2s3t4u5v6w7x8",
+      "width": 5472,
+      "height": 3648,
+      "format": "jpeg",
+      "size": 12847563,
+      "suggested": {
+        "newFilename": "landscape-5px-02.jpg",
+        "source": "500px",
+        "url": "",
+        "caption": "",
+        "category": "",
+        "tags": [],
+        "location": ""
+      }
+    }
+  ],
+  "sources": {
+    "500px": 2,
+    "flickr": 1,
+    "unknown": 0
+  }
+}

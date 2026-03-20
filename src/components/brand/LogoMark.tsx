@@ -31,14 +31,15 @@ export function LogoMark({
         <path d='M50 38v10H40' />
       </g>
 
-      {/* Monogram */}
+      {/* Monogram - Script style 'AT' */}
       <text
         x='32'
-        y='38'
+        y='40'
         textAnchor='middle'
-        fontFamily='Fraunces, ui-serif, Georgia, serif'
-        fontWeight={600}
-        fontSize='22'
+        fontFamily='Georgia, Didot, "Brush Script MT", cursive'
+        fontStyle='italic'
+        fontWeight={300}
+        fontSize='26'
         fill='currentColor'
       >
         AT

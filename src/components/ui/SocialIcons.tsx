@@ -1,8 +1,7 @@
-import * as React from 'react';
 import { site } from '@/lib/site';
-import { si500px, siFlickr } from 'simple-icons';
+import { si500px, siFlickr, siInstagram } from 'simple-icons';
 
-type IconName = '500px' | 'flickr' | 'website' | 'dev';
+type IconName = '500px' | 'flickr' | 'instagram' | 'website' | 'dev';
 type IconDef = {
   title: string;
   path: string;
@@ -30,6 +29,7 @@ const devMark: IconDef = {
 const ICONS: Record<IconName, IconDef> = {
   '500px': { title: si500px.title, path: si500px.path },
   flickr: { title: siFlickr.title, path: siFlickr.path },
+  instagram: { title: siInstagram.title, path: siInstagram.path },
   website: globe,
   dev: devMark,
 };
@@ -37,6 +37,7 @@ const ICONS: Record<IconName, IconDef> = {
 function pickIcon(label: string, href?: string): IconName {
   const l = label.toLowerCase();
   const h = (href || '').toLowerCase();
+  if (l.includes('instagram')) return 'instagram';
   if (l.includes('500px')) return '500px';
   if (l.includes('flickr')) return 'flickr';
   // Highlight your dev site specifically
@@ -141,7 +142,7 @@ export function SocialLinks({
               aria-label={label}
               title={label}
               className={[base, emphasize ? emphClasses : normalClasses].join(
-                ' '
+                ' ',
               )}
               style={{ width: size + pad, height: size + pad, ...emphStyle }}
             >
