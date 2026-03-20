@@ -1,6 +1,8 @@
 import { PostMeta } from '@/components/blog/PostMeta';
 import { PostPager } from '@/components/blog/PostPager';
 import { Mdx } from '@/components/mdx';
+import { BackToTop } from '@/components/ui/BackToTop';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { readingTimeFromText } from '@/lib/readingTime';
 import { site } from '@/lib/site';
 import { allPosts, Post } from 'contentlayer/generated';
@@ -109,6 +111,13 @@ export default async function PostPage({
       </Script>
 
       <article className='container mx-auto max-w-3xl px-6 md:px-8 py-12 md:py-16'>
+        <Breadcrumbs
+          items={[
+            { label: 'Blog', href: '/blog' },
+            { label: post.title, href: `/blog/${slug}` },
+          ]}
+        />
+
         <header>
           <h1 className='font-serif text-3xl md:text-4xl tracking-tight text-foreground'>
             {post.title}
@@ -136,6 +145,8 @@ export default async function PostPage({
           }
         />
       </article>
+
+      <BackToTop />
     </>
   );
 }
