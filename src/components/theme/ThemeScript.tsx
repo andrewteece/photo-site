@@ -10,7 +10,6 @@ export function ThemeScript() {
       const root = document.documentElement;
       const stored = localStorage.getItem(storageKey);
       const systemMql = window.matchMedia('(prefers-color-scheme: dark)');
-      const systemDark = systemMql.matches;
 
       function setFavicon(src) {
         var link = document.getElementById('site-favicon');
@@ -33,8 +32,8 @@ export function ThemeScript() {
         }
       }
 
-      // Initial theme
-      var theme = stored || (systemDark ? 'dark' : 'light');
+      // Initial theme: default to light, but respect any stored choice
+      var theme = stored || 'light';
       apply(theme);
 
       // Public setter for toggles
