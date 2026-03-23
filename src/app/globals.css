@@ -31,41 +31,41 @@
   --shadow-subtle: 0 1px 12px rgba(0, 0, 0, 0.06);
   --shadow-photo: 0 6px 30px rgba(0, 0, 0, 0.18);
 
-  /* Colors (light) */
-  --color-background: oklch(1 0 0);
+  /* Colors (light) – slightly warm, print-like */
+  --color-background: oklch(0.98 0.02 95);
   --color-foreground: oklch(0.12 0 0);
-  --color-card: oklch(1 0 0);
+  --color-card: oklch(0.99 0.015 95);
   --color-card-foreground: oklch(0.12 0 0);
-  --color-muted: oklch(0.96 0.01 240);
-  --color-muted-foreground: oklch(0.5 0.02 240);
-  --color-border: oklch(0.85 0.02 240);
-  --color-input: oklch(0.83 0.02 240);
-  --color-ring: oklch(0.68 0.15 35);
+  --color-muted: oklch(0.96 0.02 95);
+  --color-muted-foreground: oklch(0.5 0.02 95);
+  --color-border: oklch(0.86 0.02 95);
+  --color-input: oklch(0.84 0.02 95);
+  --color-ring: oklch(0.68 0.16 35);
 
-  /* Brand */
-  --color-primary: oklch(0.72 0.2 35); /* warm burnt orange */
+  /* Brand – single warm accent family */
+  --color-primary: oklch(0.7 0.16 35); /* warm burnt orange */
   --color-primary-foreground: oklch(0.98 0 0);
 
-  /* Accent sand */
-  --color-accent: oklch(0.95 0.05 70);
-  --color-accent-foreground: oklch(0.3 0.03 70);
+  /* Accent: light tint of primary */
+  --color-accent: oklch(0.95 0.04 35);
+  --color-accent-foreground: oklch(0.32 0.04 35);
 }
 
 /* Dark theme overrides */
 .dark {
-  --color-background: oklch(0.15 0.02 240);
+  --color-background: oklch(0.16 0.02 255);
   --color-foreground: oklch(0.98 0 0);
-  --color-card: oklch(0.18 0.02 240);
+  --color-card: oklch(0.19 0.02 255);
   --color-card-foreground: oklch(0.98 0 0);
-  --color-muted: oklch(0.24 0.02 240);
-  --color-muted-foreground: oklch(0.75 0.02 240);
-  --color-border: oklch(0.3 0.01 240);
+  --color-muted: oklch(0.24 0.02 255);
+  --color-muted-foreground: oklch(0.75 0.02 255);
+  --color-border: oklch(0.3 0.01 255);
   --color-input: var(--color-border);
-  --color-ring: oklch(0.72 0.2 35);
-  --color-primary: oklch(0.68 0.19 35);
+  --color-ring: oklch(0.72 0.18 35);
+  --color-primary: oklch(0.68 0.17 35);
   --color-primary-foreground: oklch(0.99 0 0);
-  --color-accent: oklch(0.3 0.03 70);
-  --color-accent-foreground: oklch(0.95 0.05 70);
+  --color-accent: oklch(0.3 0.04 35);
+  --color-accent-foreground: oklch(0.95 0.04 35);
 }
 
 /* Base resets mapped to tokens */
