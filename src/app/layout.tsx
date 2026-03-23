@@ -6,7 +6,6 @@ import { WebVitals } from '@/components/WebVitals';
 import { site } from '@/lib/site';
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Inter } from 'next/font/google';
-import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -119,56 +118,51 @@ export default function RootLayout({
         <ThemeScript />
 
         {/* JSON-LD: Professional Photographer */}
-        <Script
+        <script
           id='ld-person'
           type='application/ld+json'
-          strategy='afterInteractive'
-        >
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': ['Person', 'PhotographAction'],
-            name: 'Andrew Teece',
-            jobTitle: 'Professional Photographer',
-            description:
-              'Visual artist specializing in fine art photography, landscape photography, and portrait photography.',
-            url: baseUrl,
-            image: `${baseUrl}/opengraph-image`,
-            sameAs: site.socials.map((s) => s.href),
-            email: site.email,
-            knowsAbout: [
-              'Photography',
-              'Fine Art',
-              'Landscape Photography',
-              'Portrait Photography',
-              'Visual Arts',
-            ],
-            hasOccupation: {
-              '@type': 'Occupation',
-              name: 'Photographer',
-              occupationalCategory: 'Photographers',
-              educationRequirements: 'Professional Training',
-            },
-          })}
-        </Script>
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': ['Person', 'PhotographAction'],
+              name: 'Andrew Teece',
+              jobTitle: 'Professional Photographer',
+              description:
+                'Visual artist specializing in fine art photography, landscape photography, and portrait photography.',
+              url: baseUrl,
+              image: `${baseUrl}/opengraph-image`,
+              sameAs: site.socials.map((s) => s.href),
+              email: site.email,
+              knowsAbout: [
+                'Photography',
+                'Fine Art',
+                'Landscape Photography',
+                'Portrait Photography',
+                'Visual Arts',
+              ],
+              hasOccupation: {
+                '@type': 'Occupation',
+                name: 'Photographer',
+                occupationalCategory: 'Photographers',
+                educationRequirements: 'Professional Training',
+              },
+            }),
+          }}
+        />
 
         {/* JSON-LD: WebSite */}
-        <Script
+        <script
           id='ld-website'
           type='application/ld+json'
-          strategy='afterInteractive'
-        >
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: site.brand,
-            url: baseUrl,
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: `${baseUrl}/search?q={query}`,
-              'query-input': 'required name=query',
-            },
-          })}
-        </Script>
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: site.brand,
+              url: baseUrl,
+            }),
+          }}
+        />
       </head>
 
       <body

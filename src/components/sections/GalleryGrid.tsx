@@ -1,19 +1,41 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
-
+import Image from 'next/image';
 import Link from 'next/link';
 
-// The exact files we want to show (must exist under /public/images/portfolio)
-const desired = [
-  '/images/portfolio/goldengate.jpg',
-  '/images/portfolio/morning-colors.jpg',
-  '/images/portfolio/calm-morning.jpg',
-  '/images/portfolio/morning-storm.jpg',
-  '/images/portfolio/dew.jpg',
-  '/images/portfolio/fern.jpg',
-];
+import { getAllGalleries } from '@/lib/galleries';
+import manifest from '@/lib/image-manifest.json';
 
-export default function GalleryGrid() {
+type ManifestItem = {
+  src: string;
+  width: number;
+  height: number;
+  blurDataURL: string;
+};
+
+export default async function GalleryGrid() {
+  const galleries = await getAllGalleries();
+
+  const featuredGalleries = galleries.filter((g) => g.featured);
+
+  // Collect image srcs from featured galleries (including unique covers), preserving frontmatter order
+  const featuredSrcs = Array.from(
+    new Set(
+      featuredGalleries.flatMap((g) => {
+        const images = g.images ?? [];
+        if (g.cover && !images.includes(g.cover)) {
+          return [g.cover, ...images];
+        }
+        return images;
+      }),
+    ),
+  );
+
+  const photos = manifest as ManifestItem[];
+
+  const featured = featuredSrcs
+    .map((src) => photos.find((p) => p.src === src))
+    .filter((p): p is ManifestItem => Boolean(p))
+    .slice(0, 6);
+
   return (
     <section className='py-14 md:py-20'>
       <div className='mx-auto max-w-6xl px-6 md:px-8'>
@@ -22,28 +44,21 @@ export default function GalleryGrid() {
         </h2>
 
         <ul className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {desired.map((src) => (
+          {featured.map((photo) => (
             <li
-              key={src}
+              key={photo.src}
               className='group overflow-hidden rounded-2xl ring-1 ring-zinc-900/10 bg-white dark:ring-white/10 dark:bg-white/[0.03] transition-all hover:ring-2 hover:ring-foreground/20 hover:shadow-lg'
             >
               <Link href='/portfolio' className='block relative'>
                 <div className='relative aspect-[4/3]'>
-                  <img
-                    src={src}
+                  <Image
+                    src={photo.src}
                     alt=''
-                    decoding='async'
-                    loading='lazy'
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                      transition: 'transform 500ms cubic-bezier(0.22,1,0.36,1)',
-                    }}
-                    className='group-hover:scale-[1.05]'
+                    fill
+                    placeholder='blur'
+                    blurDataURL={photo.blurDataURL}
+                    className='absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]'
+                    sizes='(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'
                   />
                   {/* Hover overlay with view icon */}
                   <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>

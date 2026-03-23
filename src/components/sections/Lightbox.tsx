@@ -1,6 +1,7 @@
 'use client';
 
 import type { Caption } from '@/lib/captions';
+import { site } from '@/lib/site';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
@@ -163,6 +164,7 @@ export default function Lightbox({
   const nextIndex = mod(safeIndex + 1, items.length);
   const prevItem = items[prevIndex];
   const nextItem = items[nextIndex];
+  const currentYear = new Date().getFullYear();
 
   return (
     <div
@@ -326,7 +328,6 @@ export default function Lightbox({
                     blurDataURL={current.blurDataURL}
                     className='object-contain'
                     quality={95}
-                    unoptimized
                   />
                 </div>
               </div>
@@ -387,6 +388,9 @@ export default function Lightbox({
                 </a>
               </div>
             )}
+            <p className='mt-3 text-[11px] text-white/60'>
+              © {currentYear} {site.brand}. All rights reserved.
+            </p>
           </div>
         </div>
       )}

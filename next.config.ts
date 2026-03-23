@@ -4,6 +4,7 @@ import type { NextConfig } from 'next';
 const withMDX = createMDX({ extension: /\.mdx?$/ });
 
 const nextConfig = {
+  poweredByHeader: false,
   pageExtensions: ['ts', 'tsx', 'mdx'],
   images: {
     // Enable Next/Vercel optimizer + modern formats
