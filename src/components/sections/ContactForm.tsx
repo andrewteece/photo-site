@@ -12,10 +12,33 @@ export default function ContactForm() {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [honeypot, setHoneypot] = useState(''); // should stay empty
+  const [nameTouched, setNameTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [messageTouched, setMessageTouched] = useState(false);
 
   const canSubmit = useMemo(() => {
-    return name.trim() !== '' && email.trim() !== '' && message.trim() !== '';
+    const nameTrim = name.trim();
+    const emailTrim = email.trim();
+    const messageTrim = message.trim();
+    const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailTrim);
+    return (
+      nameTrim !== '' && emailTrim !== '' && emailValid && messageTrim !== ''
+    );
   }, [name, email, message]);
+
+  const nameError =
+    nameTouched && name.trim() === '' ? 'Please enter your name.' : '';
+  const emailError = emailTouched
+    ? email.trim() === ''
+      ? 'Please enter your email.'
+      : !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())
+        ? 'Please enter a valid email address.'
+        : ''
+    : '';
+  const messageError =
+    messageTouched && message.trim() === ''
+      ? 'Please enter a brief message.'
+      : '';
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); // ensure 'e' is used and default submit is blocked
@@ -26,7 +49,10 @@ export default function ContactForm() {
       return;
     }
     if (!canSubmit) {
-      setErr('Please fill in your name, email, and a brief message.');
+      setNameTouched(true);
+      setEmailTouched(true);
+      setMessageTouched(true);
+      setErr('Please fix the highlighted fields.');
       return;
     }
 
@@ -45,7 +71,7 @@ export default function ContactForm() {
       ].join('\n');
 
       const href = `mailto:${to}?subject=${encodeURIComponent(
-        subj
+        subj,
       )}&body=${encodeURIComponent(body)}`;
 
       window.location.href = href;
@@ -60,8 +86,9 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className='rounded-2xl border border-zinc-900/10 dark:border-white/10 p-5'
+      className='card card-body'
       noValidate
+      aria-busy={busy}
     >
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <div>
@@ -74,9 +101,17 @@ export default function ContactForm() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className='w-full rounded-lg bg-black/20 border border-white/15 px-3 py-2 outline-none focus:border-white/40'
+            onBlur={() => setNameTouched(true)}
+            className='input'
             autoComplete='name'
+            aria-invalid={!!nameError}
+            aria-describedby={nameError ? 'contact-name-error' : undefined}
           />
+          {nameError && (
+            <p id='contact-name-error' className='mt-1 text-xs text-red-500'>
+              {nameError}
+            </p>
+          )}
         </div>
 
         <div>
@@ -90,9 +125,17 @@ export default function ContactForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className='w-full rounded-lg bg-black/20 border border-white/15 px-3 py-2 outline-none focus:border-white/40'
+            onBlur={() => setEmailTouched(true)}
+            className='input'
             autoComplete='email'
+            aria-invalid={!!emailError}
+            aria-describedby={emailError ? 'contact-email-error' : undefined}
           />
+          {emailError && (
+            <p id='contact-email-error' className='mt-1 text-xs text-red-500'>
+              {emailError}
+            </p>
+          )}
         </div>
 
         <div className='md:col-span-2'>
@@ -104,7 +147,7 @@ export default function ContactForm() {
             name='subject'
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className='w-full rounded-lg bg-black/20 border border-white/15 px-3 py-2 outline-none focus:border-white/40'
+            className='input'
             placeholder='Assignment, licensing, or prints'
           />
         </div>
@@ -120,9 +163,19 @@ export default function ContactForm() {
             required
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className='w-full rounded-lg bg-black/20 border border-white/15 px-3 py-2 outline-none focus:border-white/40'
+            onBlur={() => setMessageTouched(true)}
+            className='textarea'
             placeholder='A few details about your project, dates, and location.'
+            aria-invalid={!!messageError}
+            aria-describedby={
+              messageError ? 'contact-message-error' : undefined
+            }
           />
+          {messageError && (
+            <p id='contact-message-error' className='mt-1 text-xs text-red-500'>
+              {messageError}
+            </p>
+          )}
         </div>
 
         {/* Honeypot anti-spam field (hidden) */}
@@ -143,7 +196,7 @@ export default function ContactForm() {
         <button
           type='submit'
           disabled={!canSubmit || busy}
-          className='inline-flex items-center rounded-full bg-brand px-5 py-2 text-black disabled:opacity-50'
+          className='btn btn-primary rounded-full px-5'
         >
           {busy ? 'Opening…' : 'Send'}
         </button>
@@ -155,9 +208,21 @@ export default function ContactForm() {
         </a>
       </div>
 
-      {err && <p className='mt-3 text-sm text-red-400'>{err}</p>}
+      {err && (
+        <p
+          className='mt-3 text-sm text-red-500'
+          role='alert'
+          aria-live='assertive'
+        >
+          {err}
+        </p>
+      )}
       {sent && (
-        <p className='mt-3 text-sm text-emerald-400'>
+        <p
+          className='mt-3 text-sm text-emerald-500'
+          role='status'
+          aria-live='polite'
+        >
           If your email app didn’t open, please use{' '}
           <a className='underline' href='mailto:hello@andrewteece.com'>
             hello@andrewteece.com
@@ -165,6 +230,9 @@ export default function ContactForm() {
           .
         </p>
       )}
+      <p className='mt-3 text-xs text-muted-foreground'>
+        No newsletters or marketing—just project-related replies.
+      </p>
     </form>
   );
 }

@@ -32,9 +32,9 @@ export default function ContactPage() {
           location is perfect—I&apos;ll follow up with next steps.
         </p>
 
-        <div className='mt-8 grid gap-8 md:grid-cols-3'>
+        <div className='mt-8 grid gap-8 md:grid-cols-3 items-start'>
           {/* Left: details */}
-          <div className='rounded-2xl border border-border p-5'>
+          <div className='card card-body'>
             <h2 className='text-lg font-medium mb-2'>Details</h2>
             <ul className='space-y-2 text-sm text-muted-foreground'>
               <li>
