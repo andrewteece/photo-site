@@ -1,7 +1,5 @@
-'use client';
-
 import Photo from '@/components/Photo';
-import { useMDXComponent } from 'next-contentlayer/hooks';
+import { compileMDX } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import type { AnchorHTMLAttributes } from 'react';
 
@@ -25,7 +23,12 @@ const components = {
   Photo,
 };
 
-export function Mdx({ code }: { code: string }) {
-  const Component = useMDXComponent(code);
-  return <Component components={components} />;
+export async function Mdx({ source }: { source: string }) {
+  const { content } = await compileMDX({
+    source,
+    options: { parseFrontmatter: false },
+    components,
+  });
+
+  return content;
 }

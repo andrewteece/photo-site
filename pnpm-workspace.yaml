@@ -1,6 +1,5 @@
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
-  - contentlayer
   - esbuild
   - protobufjs
   - sharp

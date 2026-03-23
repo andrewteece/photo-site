@@ -1,17 +1,15 @@
 import { Shell } from '@/components/layout/Shell';
 import { Mdx } from '@/components/mdx';
 import { GalleryImages } from '@/components/sections/GalleryImages';
+import { getAllGalleries, getGalleryBySlug } from '@/lib/galleries';
 import { site } from '@/lib/site';
-import { allGalleries } from 'contentlayer/generated';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
-// Force dynamic rendering to avoid React 19 prerender issues with MDX
-export const dynamic = 'force-dynamic';
-
 export async function generateStaticParams() {
-  return allGalleries.map((g) => ({ slug: g.slug }));
+  const galleries = await getAllGalleries();
+  return galleries.map((g) => ({ slug: g.slug }));
 }
 
 export async function generateMetadata({
@@ -20,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const gallery = allGalleries.find((g) => g.slug === slug);
+  const gallery = await getGalleryBySlug(slug);
   if (!gallery) return {};
 
   const url = `/portfolio/${slug}`;
@@ -54,8 +52,7 @@ export default async function GalleryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const gallery = allGalleries.find((g) => g.slug === slug);
-
+  const gallery = await getGalleryBySlug(slug);
   if (!gallery) return notFound();
 
   return (
@@ -101,7 +98,7 @@ export default async function GalleryPage({
 
         {/* MDX Content (story, process, etc.) */}
         <div className='prose prose-lg dark:prose-invert max-w-none mb-16'>
-          <Mdx code={gallery.body.code} />
+          <Mdx source={gallery.body} />
         </div>
 
         {/* Image Gallery Grid */}

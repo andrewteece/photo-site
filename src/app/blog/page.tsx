@@ -1,19 +1,10 @@
 import { Shell } from '@/components/layout/Shell';
 import { BackToTop } from '@/components/ui/BackToTop';
-import { allPosts, Post } from 'contentlayer/generated';
+import { getAllPosts, type PostRecord } from '@/lib/posts';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import Script from 'next/script';
-
-interface PostWithMaybeSlugAsParams extends Post {
-  slugAsParams?: string;
-}
-const postsAll: ReadonlyArray<PostWithMaybeSlugAsParams> =
-  allPosts as ReadonlyArray<PostWithMaybeSlugAsParams>;
-
-const slugOf = (p: PostWithMaybeSlugAsParams): string =>
-  p.slug ?? p.slugAsParams ?? '';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -31,12 +22,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogIndex() {
-  const posts = [...postsAll].sort((a, b) => {
-    const ad = new Date(a.date || 0).getTime();
-    const bd = new Date(b.date || 0).getTime();
-    return bd - ad;
-  });
+export default async function BlogIndex() {
+  const posts = await getAllPosts();
 
   const base =
     process.env.NEXT_PUBLIC_SITE_URL ??
@@ -55,7 +42,7 @@ export default function BlogIndex() {
             itemListElement: posts.map((p, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `${base}/blog/${slugOf(p)}`,
+              url: `${base}/blog/${p.slug}`,
             })),
           })}
         </Script>
@@ -82,11 +69,11 @@ export default function BlogIndex() {
             </div>
           ) : (
             <ul className='mt-8 grid gap-6 sm:grid-cols-2 stagger-children'>
-              {posts.map((p) => {
-                const url = `/blog/${slugOf(p)}`;
+              {posts.map((p: PostRecord) => {
+                const url = `/blog/${p.slug}`;
                 return (
                   <li
-                    key={p._id}
+                    key={p.slug}
                     className='card overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1'
                   >
                     <Link href={url} className='block'>

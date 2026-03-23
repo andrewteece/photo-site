@@ -3,25 +3,16 @@ import { PostPager } from '@/components/blog/PostPager';
 import { Mdx } from '@/components/mdx';
 import { BackToTop } from '@/components/ui/BackToTop';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { getAllPosts, getPostBySlug } from '@/lib/posts';
 import { readingTimeFromText } from '@/lib/readingTime';
 import { site } from '@/lib/site';
-import { allPosts, Post } from 'contentlayer/generated';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 
-// Force dynamic rendering to avoid React 19 prerender issues with MDX
-export const dynamic = 'force-dynamic';
-
-interface PostMaybeSlug extends Post {
-  slugAsParams?: string;
-  draft?: boolean;
-}
-const slugOf = (p: Post): string =>
-  (p as PostMaybeSlug).slug ?? (p as PostMaybeSlug).slugAsParams ?? '';
-
 export async function generateStaticParams() {
-  return allPosts.map((p) => ({ slug: slugOf(p) }));
+  const posts = await getAllPosts();
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -30,12 +21,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = allPosts.find((p) => slugOf(p) === slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
 
   const url = `/blog/${slug}`;
   const image = `/blog/${slug}/opengraph-image`;
-  const isDraft = Boolean((post as PostMaybeSlug).draft);
+  const isDraft = Boolean(post.draft);
 
   return {
     title: post.title,
@@ -66,19 +57,16 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-
-  const post = allPosts.find((p) => slugOf(p) === slug);
+  const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
   // Reading time from MDX body (raw preferred, fallback to code)
-  const source = post.body?.raw ?? post.body?.code ?? '';
+  const source = post.body;
   const { minutes } = readingTimeFromText(source);
 
   // Sort for prev/next (newest -> oldest)
-  const posts = [...allPosts].sort(
-    (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime(),
-  );
-  const idx = posts.findIndex((p) => slugOf(p) === slug);
+  const posts = await getAllPosts();
+  const idx = posts.findIndex((p) => p.slug === slug);
   const prevPost = idx > 0 ? posts[idx - 1] : undefined;
   const nextPost =
     idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
@@ -87,7 +75,7 @@ export default async function PostPage({
     process.env.NEXT_PUBLIC_SITE_URL ??
     'https://www.andrewteecephotography.com';
   const canonical = `${base}/blog/${slug}`;
-  const ogImage = `${base}/blog/${slug}/opengraph-image.png`;
+  const ogImage = `${base}/blog/${slug}/opengraph-image`;
 
   return (
     <>
@@ -129,18 +117,18 @@ export default async function PostPage({
         </header>
 
         <div className='prose prose-lg mt-8 max-w-none'>
-          <Mdx code={post.body.code} />
+          <Mdx source={post.body} />
         </div>
 
         <PostPager
           prev={
             prevPost
-              ? { title: prevPost.title, slug: slugOf(prevPost) }
+              ? { title: prevPost.title, slug: prevPost.slug }
               : undefined
           }
           next={
             nextPost
-              ? { title: nextPost.title, slug: slugOf(nextPost) }
+              ? { title: nextPost.title, slug: nextPost.slug }
               : undefined
           }
         />

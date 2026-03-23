@@ -1,20 +1,10 @@
 // Serve an image sitemap at /sitemap-images.xml
 import { getCaptionFor } from '@/lib/captions';
-import { allPosts, Post } from 'contentlayer/generated';
+import { getAllPosts } from '@/lib/posts';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 export const runtime = 'nodejs';
-
-// Keep Post's types intact — just add optional slug/draft for convenience
-type WithMaybeSlug = { slugAsParams?: string; draft?: boolean | null };
-
-// Some Contentlayer schemas may not guarantee cover is a string at runtime.
-// We'll *read* it as unknown and normalize safely.
-type PostWithUnknownCover = Post & { cover?: unknown } & WithMaybeSlug;
-
-const posts = allPosts as ReadonlyArray<PostWithUnknownCover>;
-const slugOf = (p: PostWithUnknownCover) => p.slug ?? p.slugAsParams ?? '';
 
 const IMG_EXT = /\.(jpe?g|png|webp|avif)$/i;
 
@@ -47,6 +37,7 @@ export async function GET() {
   });
 
   // 2) Blog post covers (only if cover is a *string*)
+  const posts = await getAllPosts();
   const postCoverEntries = posts
     .filter((p) => !p.draft)
     .map((p) => {
@@ -54,7 +45,7 @@ export async function GET() {
       if (!cover) return null;
       const absCover = cover.startsWith('http') ? cover : `${base}${cover}`;
       return {
-        url: `${base}/blog/${slugOf(p)}`,
+        url: `${base}/blog/${p.slug}`,
         image: absCover,
         lastmod: p.date ? new Date(p.date).toISOString() : nowISO,
         title: p.title,
