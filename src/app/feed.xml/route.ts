@@ -1,18 +1,5 @@
-import { allPosts, Post } from 'contentlayer/generated';
+import { getAllPosts } from '@/lib/posts';
 import { site } from '@/lib/site';
-
-export const runtime = 'edge';
-
-interface PostMaybeSlug extends Post {
-  slugAsParams?: string;
-  draft?: boolean | null;
-  tags?: string[]; // optional, only used if your schema exposes it
-}
-
-const posts: ReadonlyArray<PostMaybeSlug> =
-  allPosts as ReadonlyArray<PostMaybeSlug>;
-
-const slugOf = (p: PostMaybeSlug): string => p.slug ?? p.slugAsParams ?? '';
 
 const esc = (s = '') =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -26,11 +13,13 @@ export async function GET() {
     process.env.NEXT_PUBLIC_SITE_URL ??
     'https://www.andrewteecephotography.com';
 
-  const items = [...posts]
+  const all = await getAllPosts();
+
+  const items = all
     .filter((p) => !p.draft)
     .sort(
       (a, b) =>
-        new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+        new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime(),
     );
 
   const year = new Date().getFullYear();
@@ -59,7 +48,7 @@ export async function GET() {
 
   ${items
     .map((p) => {
-      const url = `${siteUrl}/blog/${slugOf(p)}`;
+      const url = `${siteUrl}/blog/${p.slug}`;
       const pub = p.date
         ? new Date(p.date).toUTCString()
         : new Date().toUTCString();
