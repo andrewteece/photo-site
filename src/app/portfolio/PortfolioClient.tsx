@@ -18,7 +18,7 @@ export function PortfolioClient({ photos }: { photos: ManifestItem[] }) {
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [activeTags, setActiveTags] = useState<string[]>(['selected']);
 
   // Extract unique categories and tags from all photos with counts
   const { categories, allTags, categoryCounts, tagCounts } = useMemo(() => {

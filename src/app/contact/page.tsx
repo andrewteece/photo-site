@@ -5,13 +5,14 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Get in touch with Andrew Teece for assignments, licensing, or print inquiries.',
+    'Get in touch with Andrew Teece for assignments, collaborations, or licensing inquiries.',
   alternates: {
     canonical: '/contact',
   },
   openGraph: {
     title: 'Contact — Andrew Teece Photography',
-    description: 'Get in touch for assignments, licensing, or print inquiries.',
+    description:
+      'Get in touch for assignments, collaborations, or licensing inquiries.',
     url: '/contact',
   },
 };
@@ -26,8 +27,9 @@ export default function ContactPage() {
         </h1>
 
         <p className='text-muted-foreground mt-3 max-w-prose'>
-          For assignments, licensing, or prints, use the form below or email me
-          directly.
+          For assignments, collaborations, or licensing, use the form below or
+          email me directly. A short note about your project, dates, and
+          location is perfect—I&apos;ll follow up with next steps.
         </p>
 
         <div className='mt-8 grid gap-8 md:grid-cols-3'>
@@ -46,6 +48,10 @@ export default function ContactPage() {
               </li>
               <li>Based in the Midwest • Available for select travel</li>
               <li>Usual response time: 1–2 business days</li>
+              <li>
+                Typical inquiries: editorial assignments, collaborative
+                projects, licensing existing work, and occasional print orders.
+              </li>
             </ul>
           </div>
 
