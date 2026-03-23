@@ -43,41 +43,45 @@ export default function HomePage() {
       {/* Practice & approach strip */}
       <section className='py-10 md:py-12 bg-muted/40 border-y border-border/60'>
         <Shell size='tight'>
-          <div className='flex flex-col gap-6'>
-            <div className='text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground/80 text-center'>
+          <div className='mx-auto max-w-4xl space-y-6'>
+            <p className='text-[0.65rem] md:text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground/80 text-center'>
               How this work is made
-            </div>
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6'>
-              <div className='flex flex-col items-center text-center rounded-xl border border-border/70 bg-background/70 px-4 py-4 sm:px-5 sm:py-5 hover-lift transition-colors'>
+            </p>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6'>
+              <div className='flex flex-col items-start sm:items-center text-left sm:text-center rounded-2xl border border-border/70 bg-background/80 px-4 py-4 sm:px-5 sm:py-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-foreground/30 hover:bg-background/90'>
                 <div className='text-sm md:text-base font-semibold text-foreground'>
-                  Natural light
+                  Natural light only
                 </div>
-                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[16rem]'>
-                  Photographed in available, ambient light
+                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[18rem]'>
+                  Photographed in available ambient light
                 </div>
               </div>
-              <div className='flex flex-col items-center text-center rounded-xl border border-border/70 bg-background/70 px-4 py-4 sm:px-5 sm:py-5 hover-lift transition-colors'>
+
+              <div className='flex flex-col items-start sm:items-center text-left sm:text-center rounded-2xl border border-border/70 bg-background/80 px-4 py-4 sm:px-5 sm:py-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-foreground/30 hover:bg-background/90'>
                 <div className='text-sm md:text-base font-semibold text-foreground'>
                   Considered exposures
                 </div>
-                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[16rem]'>
+                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[18rem]'>
                   Made slowly, with time to look
                 </div>
               </div>
-              <div className='flex flex-col items-center text-center rounded-xl border border-border/70 bg-background/70 px-4 py-4 sm:px-5 sm:py-5 hover-lift transition-colors'>
+
+              <div className='flex flex-col items-start sm:items-center text-left sm:text-center rounded-2xl border border-border/70 bg-background/80 px-4 py-4 sm:px-5 sm:py-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-foreground/30 hover:bg-background/90'>
                 <div className='text-sm md:text-base font-semibold text-foreground'>
-                  On foot, on location
+                  On foot, not staged
                 </div>
-                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[16rem]'>
-                  Scenes discovered by walking, not staged
+                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[18rem]'>
+                  Scenes discovered by walking on location
                 </div>
               </div>
-              <div className='flex flex-col items-center text-center rounded-xl border border-border/70 bg-background/70 px-4 py-4 sm:px-5 sm:py-5 hover-lift transition-colors'>
+
+              <div className='flex flex-col items-start sm:items-center text-left sm:text-center rounded-2xl border border-border/70 bg-background/80 px-4 py-4 sm:px-5 sm:py-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-foreground/30 hover:bg-background/90'>
                 <div className='text-sm md:text-base font-semibold text-foreground'>
-                  Quiet places
+                  Quiet, in-between places
                 </div>
-                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[16rem]'>
-                  Drawn to edges, in-between and overlooked spaces
+                <div className='mt-1 text-xs md:text-sm text-muted-foreground max-w-[18rem]'>
+                  Drawn to edges and overlooked spaces
                 </div>
               </div>
             </div>
