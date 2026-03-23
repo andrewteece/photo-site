@@ -314,18 +314,22 @@ export default function Lightbox({
             wrapperClass='!w-full !max-w-6xl'
             contentClass='!w-full !h-full flex items-center justify-center'
           >
-            <div className='relative w-full max-w-6xl aspect-[3/2]'>
-              <Image
-                src={current.src}
-                alt={current.alt || ''}
-                fill
-                sizes='100vw'
-                placeholder={current.blurDataURL ? 'blur' : 'empty'}
-                blurDataURL={current.blurDataURL}
-                className='object-contain'
-                quality={95}
-                unoptimized
-              />
+            <div className='relative w-full max-w-6xl'>
+              <div className='bg-white rounded-2xl p-4 shadow-[var(--shadow-photo)]'>
+                <div className='relative w-full aspect-[3/2]'>
+                  <Image
+                    src={current.src}
+                    alt={current.alt || ''}
+                    fill
+                    sizes='100vw'
+                    placeholder={current.blurDataURL ? 'blur' : 'empty'}
+                    blurDataURL={current.blurDataURL}
+                    className='object-contain'
+                    quality={95}
+                    unoptimized
+                  />
+                </div>
+              </div>
             </div>
           </TransformComponent>
         </TransformWrapper>
