@@ -5,14 +5,14 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Andrew Teece — visual artist working in the medium of photography, exploring the intersection of light, geometry, and contemplation.',
+    'About Andrew Teece — Woodruff, Wisconsin–based visual artist working in the medium of photography, exploring the intersection of light, geometry, and contemplation.',
   alternates: {
     canonical: '/about',
   },
   openGraph: {
     title: 'About — Andrew Teece Photography',
     description:
-      'Learn about Andrew Teece, a visual artist specializing in fine art photography.',
+      'Learn about Andrew Teece, a Woodruff, Wisconsin–based visual artist specializing in fine art photography.',
     url: '/about',
   },
 };
@@ -26,8 +26,8 @@ export default function AboutPage() {
         </h1>
 
         <p className='mt-2 text-sm text-muted-foreground'>
-          Midwest-based photographer available for assignments, collaborations,
-          and licensing.
+          Woodruff, Wisconsin–based photographer available for assignments,
+          collaborations, and licensing.
         </p>
 
         <p className='mt-5 text-foreground/80'>
@@ -38,10 +38,10 @@ export default function AboutPage() {
         </p>
 
         <p className='mt-4 text-foreground/80'>
-          I&apos;m based in the Midwest and most at home on the edges of cities,
-          shorelines, and quiet stretches of road—places where weather,
-          structure, and time leave slow marks. The work on this site is a small
-          selection from ongoing personal projects and walks.
+          I&apos;m based in Woodruff, Wisconsin, and most at home on the edges
+          of cities, shorelines, and quiet stretches of road—places where
+          weather, structure, and time leave slow marks. The work on this site
+          is a small selection from ongoing personal projects and walks.
         </p>
 
         <p className='mt-4 text-foreground/80'>

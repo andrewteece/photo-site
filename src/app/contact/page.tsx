@@ -5,14 +5,14 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Get in touch with Andrew Teece for assignments, collaborations, or licensing inquiries.',
+    'Get in touch with Woodruff, Wisconsin photographer Andrew Teece for assignments, collaborations, or licensing inquiries.',
   alternates: {
     canonical: '/contact',
   },
   openGraph: {
     title: 'Contact — Andrew Teece Photography',
     description:
-      'Get in touch for assignments, collaborations, or licensing inquiries.',
+      'Get in touch with Woodruff, Wisconsin photographer Andrew Teece for assignments, collaborations, or licensing inquiries.',
     url: '/contact',
   },
 };
@@ -46,7 +46,7 @@ export default function ContactPage() {
                   hello@andrewteece.com
                 </a>
               </li>
-              <li>Based in the Midwest • Available for select travel</li>
+              <li>Based in Woodruff, WI 54568 • Available for select travel</li>
               <li>Usual response time: 1–2 business days</li>
               <li>
                 Typical inquiries: editorial assignments, collaborative

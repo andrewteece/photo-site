@@ -51,14 +51,25 @@ const pages: {
     ],
   },
   {
-    path: '/blog/2025-calm-morning',
+    path: '/blog/2025-craig-roberts-e6',
     requiredSnippets: [
       '<meta property="og:type" content="article"',
       '<meta property="og:title"',
       '<meta property="og:description"',
       '<meta name="twitter:card" content="summary_large_image"',
       '<link rel="canonical"',
-      '/blog/2025-calm-morning"',
+      '/blog/2025-craig-roberts-e6"',
+    ],
+  },
+  {
+    path: '/blog/2025-site-refactor-redesign',
+    requiredSnippets: [
+      '<meta property="og:type" content="article"',
+      '<meta property="og:title"',
+      '<meta property="og:description"',
+      '<meta name="twitter:card" content="summary_large_image"',
+      '<link rel="canonical"',
+      '/blog/2025-site-refactor-redesign"',
     ],
   },
   {
