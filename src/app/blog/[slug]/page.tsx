@@ -7,6 +7,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/posts';
 import { readingTimeFromText } from '@/lib/readingTime';
 import { site } from '@/lib/site';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 
@@ -115,6 +116,21 @@ export default async function PostPage({
           )}
           <PostMeta dateISO={post.date} minutes={minutes} title={post.title} />
         </header>
+
+        {post.cover && (
+          <div className='mt-8 overflow-hidden rounded-2xl bg-muted/40 border border-border/40'>
+            <div className='relative w-full aspect-[3/2] sm:aspect-[16/9]'>
+              <Image
+                src={post.cover}
+                alt={post.title}
+                fill
+                sizes='(min-width: 1024px) 896px, 100vw'
+                className='object-cover'
+                priority={false}
+              />
+            </div>
+          </div>
+        )}
 
         <div className='prose prose-lg mt-8 max-w-none'>
           <Mdx source={post.body} />

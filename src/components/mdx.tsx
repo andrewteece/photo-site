@@ -8,7 +8,13 @@ type AProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href?: string };
 const A = ({ href = '', children, className, ...rest }: AProps) => {
   const isExternal = /^https?:\/\//.test(href);
   return isExternal ? (
-    <a href={href} className={className} {...rest}>
+    <a
+      href={href}
+      className={className}
+      target='_blank'
+      rel='noopener noreferrer'
+      {...rest}
+    >
       {children}
     </a>
   ) : (

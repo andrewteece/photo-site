@@ -20,6 +20,7 @@ export const site = {
     },
     { label: '500px', href: 'https://500px.com/p/AndrewTeece?view=photos' },
     { label: 'Flickr', href: 'https://www.flickr.com/photos/andrewteece/' },
+    { label: 'Medium', href: 'https://medium.com/@andrewteece' },
     { label: 'Website', href: 'https://www.andrewteece.com/' },
   ],
 
